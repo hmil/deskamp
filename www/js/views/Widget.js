@@ -1,9 +1,14 @@
-define(['text!/templates/widget.jst','backbone'], function(WidgetTemplate) {
+define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], function(WidgetTemplate, Widget) {
 	return Backbone.View.extend({
 		events: {
 			"click .widget_delete_button": "delete"
 		},
 		initialize: function(params) {
+			if(!this.model) {
+				this.model = new Widget();
+				this.model.save();
+			}
+
 			// !\ NO INSTANCE should be passed as 'wrapped', only object
 			this.wrapped = params.wrapped;
 			this.xPos = params.x || 0;
@@ -11,7 +16,7 @@ define(['text!/templates/widget.jst','backbone'], function(WidgetTemplate) {
 
 			this.template = _.template(WidgetTemplate);
 
-			_.bindAll(this, 'render', 'delete');
+			_.bindAll(this, 'render', 'delete', 'updatePosition');
             
             this.render();
 		}, 
@@ -21,7 +26,12 @@ define(['text!/templates/widget.jst','backbone'], function(WidgetTemplate) {
 			if(this.wrapped.remove) {
 				this.wrapped.remove();
 			}
-			console.log("Removing, but /!\\ remove() undefined in wrapped");
+			else console.log("Removing, but /!\\ remove() undefined in wrapped");
+		},
+
+		updatePosition: function(event, ui) {
+			this.model.set('x', ui.position.left);
+			this.mosel.set('y', ui.position.top);
 		},
 
 		render: function() {
@@ -43,7 +53,11 @@ define(['text!/templates/widget.jst','backbone'], function(WidgetTemplate) {
 				left: this.xPos
 			});
 
-			this.$el.draggable();
+			this.$el.draggable({
+				handle: ".widget_header",
+				stop: this.updatePosition
+			});
+
 			if(wrappedView.resizable === true) {
 				this.$el.resizable();
 			}

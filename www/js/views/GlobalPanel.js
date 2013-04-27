@@ -12,21 +12,19 @@ define ([
                 
                 initialize : function(){
                     
-                    _.bindAll(this, 'ondrop');
+                    _.bindAll(this, 'ondrop', 'updatePosition');
                     
+                    // We can drop elements into the main panel
                     this.$el.droppable();
                 },
-                
+                updatePosition: function(event, ui) {
+                    console.log("Updating position : ("+ui.position.left+", "+ui.position.top+")");
+                },
+
                 ondrop: function(event, ui){
                     var name = ui.draggable.attr("data-name");
 
-                    if(!name) return;
-                    
-                    console.log(name);
-                    
-                    console.log(modules);
-                    
-                    var test = new (modules[name].view);
+                    if(!name) return; // We dont want to drop a new widget
 
                     var wid = new Widget({
                         wrapped: modules[name].view, 
