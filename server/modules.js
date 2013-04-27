@@ -70,7 +70,8 @@ module.exports = function(app){
                     jsFile += '{ '
                         + 'view: '+modules[i].name+'View,'
                         + 'icon: "'+modules[i].icon+'",'
-                        + 'title: "'+modules[i].title+'"'
+                        + 'title: "'+modules[i].title+'",'
+                        + 'name: "'+modules[i].name+'"'
                         +'}';
                         
                     if(i < modules.length -1)

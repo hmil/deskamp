@@ -2,7 +2,7 @@
     <%
     _.each(widgets, function(w){
     %>
-        <div class="widget_icon" data-draggable="draggable" >
+        <div class="widget_icon" data-draggable="draggable" data-name="<%= w.name %>">
             <img src="<%= w.icon %>" title="<%= w.title %>" />
         </div>
     <%
