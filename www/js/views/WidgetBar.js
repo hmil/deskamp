@@ -17,7 +17,16 @@ define(['text!templates/WidgetBar.jst', 'backbone', 'jqueryUI'], function(templa
             console.log(this.widgets);
             this.$el.html( this.template( {widgets: this.widgets} ) );
             
-            this.$('[data-draggable="draggable"]').draggable();
+            this.$('[data-draggable="draggable"]').draggable({
+                helper: "clone"
+            });
+            //change body to view 
+            $('body').droppable({
+                drop: function(event, ui) {
+                    console.log(ui.draggable.attr("data-name"));
+                    
+                }
+            });
         }
     
     });
