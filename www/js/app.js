@@ -11,10 +11,10 @@
 
 
 define([
-    'views/widgetBar',
+    'views/WidgetBar',
     'backbone', 
     'Router'],
-    function(WidgetBar){
+    function(WidgetBar, Modules){
 
     // App is a singleton object
     var App = {};
@@ -33,25 +33,8 @@ define([
         var arguments = {};
         
         this.widgetBar = new WidgetBar({
-            el: '#widget_bar',
-            
-            widgets: [
-                
-                {
-                    name: "todo",
-                    title: "Todo list",
-                    icon: "todo/icon.png"
-                }, 
-                
-                {
-                    name: "sticky",
-                    title: "Sticky note",
-                    icon: "sticky/icon.png"
-                }
-            
-            ]
+            el: '#widget_bar'
         });
-        
         
         console.log("app initialized");
     };

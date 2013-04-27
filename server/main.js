@@ -6,8 +6,7 @@ var app = express()
 	, server = http.createServer(app)
 	, io = require('socket.io').listen(server)
 	, mongoose = require('mongoose/')
-	, database = mongoose.connect('mongodb://localhost/hackathon', function(err) { if(err) throw err; })
-	;
+	, database = mongoose.connect('mongodb://localhost/hackathon', function(err) { if(err) throw err; });
 
 // var WidgetSchema = new mongoose.Schema({
 // 	name: String
@@ -26,8 +25,13 @@ var app = express()
 // 	console.log("-->"+data);
 // });
 
+// Loads the custom modules
+require('./modules.js')(app);
+
 //Configures the application
 require('./config.js')(app);
+
+
 
 /*
 

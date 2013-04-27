@@ -1,5 +1,5 @@
 {
-    "name"      : "sticky",
+    "name"      : "todo",
     "version"   : "0.0.1",
     "author"    : "",
     
@@ -7,5 +7,5 @@
     "style"     : "style.css",
     
     "icon"      : "icon.png",
-    "title"     : "Sticky note"
+    "title"     : "todo list"
 }

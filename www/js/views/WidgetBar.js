@@ -1,20 +1,22 @@
 ﻿
-define(['text!templates/WidgetBar.jst', 'backbone', 'jqueryUI'], function(templateString){
+define([
+    'text!templates/WidgetBar.jst',
+    'modules',
+    'backbone', 
+    'jqueryUI'], function(templateString, modules){
     
     return Backbone.View.extend({
         
         initialize: function(params){
-        
+            
             this.template = _.template( templateString );
             
-            this.widgets = params.widgets;
+            this.widgets = modules;
             
             this.render();
         },
         
         render: function(){
-            
-            console.log(this.widgets);
             this.$el.html( this.template( {widgets: this.widgets} ) );
             
             this.$('[data-draggable="draggable"]').draggable();

@@ -22,10 +22,11 @@ module.exports = function(app){
         app.use(express.cookieParser(process.env.COOKIE_SECRET || "omgwtfbbq"));
         app.use(express.cookieSession());
         app.use(app.router);
-        app.use(express.static(__dirname + '/../www'));
         
         //This allows modules to link local files like images or templates
-        app.use(express.static(__dirname + '/../modules')); 
+        app.use("/modules", express.static(__dirname + '/../modules')); 
         
+        
+        app.use(express.static(__dirname + '/../www'));
     });
 };
