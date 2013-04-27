@@ -4,5 +4,9 @@
     "author"    : "",
     
     "view"      : "view.js",
-    "style"     : "style.css"
+    "style"     : "style.css",
+    
+    // Icon credit : http://www.fatcow.com/
+    "icon"      : "icon.jpg",
+    "title"     : "Sticky note"
 }

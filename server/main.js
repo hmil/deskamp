@@ -29,10 +29,6 @@ var app = express()
 //Configures the application
 require('./config.js')(app);
 
-app.get('/', function(req, res) {
-
-})
-
 /*
 
 API calls : 

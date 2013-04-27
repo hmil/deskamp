@@ -24,5 +24,8 @@ module.exports = function(app){
         app.use(app.router);
         app.use(express.static(__dirname + '/../www'));
         
+        //This allows modules to link local files like images or templates
+        app.use(express.static(__dirname + '/../modules')); 
+        
     });
 };
