@@ -11,9 +11,10 @@
 
 
 define([
+    'views/widgetBar',
     'backbone', 
     'Router'],
-    function(){
+    function(WidgetBar){
 
     // App is a singleton object
     var App = {};
@@ -28,6 +29,29 @@ define([
         if(!Backbone.history.start()){
             window.location.hash = '/';
         }
+        
+        var arguments = {};
+        
+        this.widgetBar = new WidgetBar({
+            el: '#widget_bar',
+            
+            widgets: [
+                
+                {
+                    name: "todo",
+                    title: "Todo list",
+                    icon: "todo/icon.png"
+                }, 
+                
+                {
+                    name: "sticky",
+                    title: "Sticky note",
+                    icon: "sticky/icon.png"
+                }
+            
+            ]
+        });
+        
         
         console.log("app initialized");
     };

@@ -9,7 +9,9 @@ requirejs.config({
         'socket.io': '/socket.io/lib/socket.io',
         'underscore': '/js/lib/underscore',
         'backbone': '/js/lib/backbone',
-        'Session': '/js/util/Session'
+        'templates': '/templates',
+        'Session': '/js/util/Session',
+        'jqueryUI': '/js/lib/jquery-ui-1.10.2.custom.min'
     }
 });
 

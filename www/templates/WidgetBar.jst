@@ -1,0 +1,11 @@
+﻿<div>
+    <%
+    _.each(widgets, function(w){
+    %>
+        <div class="widget_icon" data-draggable="draggable" >
+            <img src="<%= w.icon %>" title="<%= w.title %>" />
+        </div>
+    <%
+    })
+    %>
+</div>
