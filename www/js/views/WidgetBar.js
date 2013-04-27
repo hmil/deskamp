@@ -23,13 +23,6 @@ define([
             this.$('[data-draggable="draggable"]').draggable({
                 helper: "clone"
             });
-            //change body to view 
-            $('body').droppable({
-                drop: function(event, ui) {
-                    console.log(ui.draggable.attr("data-name"));
-                    
-                }
-            });
         }
     
     });

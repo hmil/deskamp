@@ -7,9 +7,10 @@
 
 define([
     'views/WidgetBar',
+    'views/GlobalPanel',
     'backbone', 
     'Router'],
-    function(WidgetBar){
+    function(WidgetBar,GlobalPanel){
 
     // App is a singleton object
     var App = {};
@@ -29,6 +30,9 @@ define([
         
         this.widgetBar = new WidgetBar({
             el: '#widget_bar'
+        });
+        this.globallPanel = new GlobalPanel({
+            el: '#global_panel'
         });
         
         console.log("app initialized");

@@ -10,6 +10,13 @@
     margin-right: 6px;
 }
 
-body {
+/*body {
     overflow: hidden;
+} */
+
+#global_panel{
+   /* margin:-1000px -1000px;*/
+    width: 20000px;
+    height: 20000px;
+    /*background-color: black;*/
 }

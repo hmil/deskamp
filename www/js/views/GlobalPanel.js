@@ -1,22 +1,31 @@
 
-define (
-    ['text!templates/GlobalPanel.jst',
+define ([
+     'views/Widget',
+      'modules',
      'backbone'],
-    function(templateString){
+    function(Widget,modules){
             return Backbone.View.extend({
 
-                intialize : function(){
+                initialize : function(){
 
-                    this.template = _.template(templateString);
-
-                    this.render();
-                },
-
-                render : function(){
-                    this.$el.html( this.template() );
+                    this.$el.droppable({
+                        drop: function(event, ui) {
+                            console.log('drop');
+                            var name = ui.draggable.attr("data-name");
+                            console.log(name);
 
 
+                            var wid = new Widget({
+                                wrapped: modules[name]
+                            });
+
+                            this.$el.append(wid.$el);
+
+                        }
+                    });
                 }
+
+
 
             })
     }
