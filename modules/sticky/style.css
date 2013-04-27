@@ -1,0 +1,10 @@
+﻿/*
+    Sticky note's style
+*/
+
+.sticky_container {
+    background-color: yellow;
+    /*box-shadow..*/
+    width   : 100%;
+    height  : 100%;
+}
