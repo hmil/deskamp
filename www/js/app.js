@@ -15,7 +15,7 @@ define([
     'backbone', 
     'Router'
     ],
-    function(WidgetBar,Backbone){
+    function(WidgetBar){
 
         // App is a singleton object
         var App = {};
