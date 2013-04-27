@@ -64,10 +64,10 @@ module.exports = function(app){
                 }
                 jsFile += '){';
                 
-                jsFile += 'return ['
+                jsFile += 'return {'
                 
                 for(var i in modules){
-                    jsFile += '{ '
+                    jsFile += modules[i].name+': { '
                         + 'view: '+modules[i].name+'View,'
                         + 'icon: "'+modules[i].icon+'",'
                         + 'title: "'+modules[i].title+'",'
@@ -78,7 +78,7 @@ module.exports = function(app){
                         jsFile += ',';
                 }
                 
-                jsFile += ']; });';
+                jsFile += '}; });';
                 
                 console.log("modules js ready");
             }

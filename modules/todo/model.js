@@ -1,9 +1,9 @@
 ﻿define(['backbone'], function(){
     
-    return new Backbone.Model.extend({
+    return Backbone.Model.extend({
         
         defaults: {
-        
+            title: 'bite'
         }
         
     });

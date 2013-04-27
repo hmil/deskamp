@@ -2,7 +2,7 @@
 define(["Session", "./model.js", "text!./template.jst", 'backbone'], 
     function(Session, Model, template){
     
-    return new Backbone.View.extend({
+    return Backbone.View.extend({
         
         /* Define these to attributes for the core to know how to layout your widget. */
         resizable: true,
