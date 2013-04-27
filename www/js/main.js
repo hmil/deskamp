@@ -1,4 +1,4 @@
-﻿/*
+/*
  * main.js is the only file explicitly loaded by require (see index.html)
  * It will load every main classes needed by app to initialize.
  * One doesn't need to specify here sub-dependencies.
@@ -9,6 +9,7 @@ requirejs.config({
         'socket.io': '/socket.io/lib/socket.io',
         'underscore': '/js/lib/underscore',
         'backbone': '/js/lib/backbone',
+        'Session': '/js/util/Session'
     }
 });
 

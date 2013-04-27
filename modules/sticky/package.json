@@ -1,0 +1,8 @@
+{
+    "name"      : "sticky",
+    "version"   : "0.0.1",
+    "author"    : "",
+    
+    "view"      : "view.js",
+    "style"     : "style.css"
+}
