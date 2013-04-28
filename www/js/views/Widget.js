@@ -1,6 +1,7 @@
-define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], function(WidgetTemplate, Widget) {
+define(['text!/templates/widget.jst', 'app', '/js/models/Widget.js', 'backbone', 'lib/JSON'], function(WidgetTemplate, App, Widget) {
 	return Backbone.View.extend({
 		events: {
+			"click": "handleWidgetsFocus",
 			"click .widget_delete_button": "onDelete",
             "mouseenter .widget_container": "onMouseenter",
             "mouseleave .widget_container": "onMouseleave",
@@ -10,6 +11,12 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
         preventProp: function(evt){
             evt.stopPropagation();
         },
+
+        handleWidgetsFocus: function() {
+        	var maxzIndex = App.maxzIndex || 1;
+        	this.$el.css('z-index', maxzIndex+1);
+        	App.maxzIndex = maxzIndex + 1;
+        },
        
 		initialize: function(params) {
 			if(!this.model) {
@@ -18,41 +25,71 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
                 this.model.save();
 			}
             
+			_.bindAll(this, 'render', 'onDelete', 'updatePosition', 'onMouseenter', 'onMouseleave', 'onDragStart', 'updateCoords', 'onWrappedModelChange');
+            
+            this.model.on('change:coords', this.updateCoords);
+            this.model.on('change:contents', this.render);
             this.isDragged = false;
 
 			// !\ NO INSTANCE should be passed as 'wrapped', only object
 			this.wrapped = this.model.get('wrappedView');
-
+            
+            this.model.on('destroy', $.proxy(function(){
+                this.onDelete()
+            }, this));
+            
+            console.log("wrapped :");
+            console.log(this.wrapped);
+            
 			this.template = _.template(WidgetTemplate);
 
-			_.bindAll(this, 'render', 'onDelete', 'updatePosition', 'onMouseenter', 'onMouseleave', 'onDragStart');
+			_.bindAll(this, 'render', 'onDelete', 'updatePosition', 
+				'onMouseenter', 'onMouseleave', 'onDragStart', 
+				'handleWidgetsFocus');
             
             this.render();
 		}, 
+        
+        updateCoords: function(){
+            var c = this.model.get('coords').split(' ');
+            this.$el.css({
+                left: c[0],
+                top: c[1]
+            });
+        },
 
-		onDelete: function() {
+		onDelete: function(evt) {
+            console.log("deleting !!!");
 			this.$el.remove();
 			if(this.wrapped.remove) {
 				this.wrapped.remove();
 			}
 			
-            app.widgets.remove(this.model);
-            this.model.destroy();
+            if(evt)
+                this.model.destroy();
 		},
 
 		updatePosition: function(event, ui) {
             this.isDragged = false;
 			this.model.set('coords', ui.position.left+' '+ui.position.top);
 		},
+        
+        onWrappedModelChange: function(){
+            this.model.set('contents', JSON.stringify(this.wrappedView.model.toJSON()));
+        },
 
 		render: function() {
 			this.$el.html(this.template());
 
-			var wrappedView = new this.wrapped({
-				el: this.$('.widget_content')
+			var wrappedView = this.wrappedView = new this.wrapped({
+				el: this.$('.widget_content'),
+                model: JSON.parse(this.model.get('contents'))
 			});
 			wrappedView.render();
-
+            
+            wrappedView.model.on('change', this.onWrappedModelChange);
+            
+            
 			var width = (wrappedView.defaultSize) ? wrappedView.defaultSize.width : 200;
 			var height = (wrappedView.defaultSize) ? wrappedView.defaultSize.height : 300;
 
@@ -72,8 +109,9 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
 				stop: this.updatePosition
 			});
 
+			this.$el.resizable();
 			if(wrappedView.resizable === true) {
-				this.$el.resizable();
+				console.log("resizable");
 			}
             
             this.controls = this.$('.widget_controls');
