@@ -1,4 +1,4 @@
-define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], function(WidgetTemplate, Widget) {
+define(['text!/templates/widget.jst', '../models/Widget.js', 'backbone'], function(WidgetTemplate, Widget) {
 	return Backbone.View.extend({
 		events: {
 			"click .widget_delete_button": "onDelete",
