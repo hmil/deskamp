@@ -23,10 +23,7 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         },
         
         initialize: function(){
-            if(!this.model){
-                console.log("User created a new sticky");
-                this.model = new Model();
-            }
+            this.model = new Model(this.model);
             
             this.template = _.template(template);
 
@@ -36,7 +33,7 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         finishEdit: function() {
             var newContent = this.$('.sticky_content').val();
 
-            this.model.set('content', newContent);
+            this.model.set('text', newContent);
             
             console.log("edited");
         },

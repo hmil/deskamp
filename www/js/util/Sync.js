@@ -8,28 +8,34 @@ define(function(){
                 switch(method){
                     case 'create':
                         
-                        console.log("emitting : create:"+model.url());
-                        socket.emit('create:'+model.url(), model.toJSON());
-                        
+                        console.log("emitting : create:"+model.url);
+                        socket.emit('create:'+model.url, model.toJSON(), $.proxy(function(ack){
+                            console.log(ack);
+                            model.id = ack.id;
+                            
+                            console.log(model);
+                            
+                            Sync.makeLive(model);
+                        }, this));
                         console.log('creating');
-                        Sync.makeLive(model);
                         break;
                     case 'update':
+                    
+                        socket.emit('update:'+model.url, {id: model.id, model: model.toJSON()});
                         
-                        socket.emit('update:'+model.url(), model.toJSON());
-                        
-                        console.log('updating');
+                        console.log('updating : '+model.id);
+                        console.log(model);
                         break;
                     case 'delete':
                         
-                        socket.emit('delete:'+model.url(), model.toJSON());
+                        socket.emit('delete:'+model.url, model.id);
                         
                         Sync.unmakeLive(model);
                         console.log('deleting');
                         break;
                     case 'read':
                         
-                        socket.emit('read:'+model.url());
+                        socket.emit('read:'+model.url);
                         
                         console.log('reading');
                         break;
@@ -41,27 +47,33 @@ define(function(){
                 for(var i in model.attributes){
                     model.on('change:'+i, (function(attr){
                         return function(model, value, option){
-                            Backbone.sync('update', {
-                                url: model.url(),
-                                toJSON: function(){ return this.attributes;},
-                                attributes: _.pick(model.toJSON(), attr)
-                            });
+                            if(!option.remote)
+                                Backbone.sync('update', model);
                         };
                     })(i));
                 }
-                model.on('destroy', function(){ Backbone.sync('delete', model); });
-                
-                model.once('sync', function(){
-                    socket.on('update:'+model.url()+'_'+model.id, function(model){
-                        console.log("server updated client data :");
-                        console.log(model);
-                    });
+                model.on('destroy', this.onModelDestroy);
+                socket.on('update:'+model.url+'_'+model.id, function(data){
+                    console.log("server updated client data : "+model.id);
+                    for(var i in data){
+                        model.set(i, data[i], {remote: true});
+                    }
+                })
+                .once('delete:'+model.url+'_'+model.id, function(){
+                    console.log("deleting :"+model.id);
+                    model.destroy({remote: true});
                 });
             },
             
             unmakeLive: function(model){
-                model.off();
-                socket.removeAllListeners('update:'+model.url()+'_'+model.id);
+                model.off('destroy', this.onModelDestroy);
+                socket.removeAllListeners('update:'+model.url+'_'+model.id)
+                    .removeAllListeners('delete:'+model.url+'_'+model.id);
+            },
+            
+            onModelDestroy: function(options){ 
+                if(!options.remote)
+                    Backbone.sync('delete', model); 
             }
         };
         

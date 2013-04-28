@@ -73,16 +73,11 @@ define ([
 
                     if(!name) return; // We dont want to drop a new widget
                     
-                    var wid = new WidgetModel({
-                            coords: event.pageX+" "+event.pageY,
-                            wrappedView: modules[name].view,
-                            wrappedName: name
-                        });
-                    
-                    
-                    app.widgets.add(wid);
-                    
-                    wid.save();
+                    app.widgets.create({
+                        coords: event.pageX+" "+event.pageY,
+                        wrappedView: modules[name].view,
+                        wrappedName: name
+                    });
                 },
                 
                 createWidget: function(model){
