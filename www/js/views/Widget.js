@@ -1,4 +1,4 @@
-define(['text!/templates/widget.jst', 'app', '/js/models/Widget.js', 'backbone', 'lib/JSON'], function(WidgetTemplate, App, Widget) {
+define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], function(WidgetTemplate, Widget) {
 	return Backbone.View.extend({
 		events: {
 			"click": "handleWidgetsFocus",
@@ -121,7 +121,9 @@ define(['text!/templates/widget.jst', 'app', '/js/models/Widget.js', 'backbone',
         
         onMouseenter: function(){
             if(!this.controlsShown) {
-                this.controls.fadeIn({
+                this.controls.animate({
+                    opacity: 0.9
+                },{
                     duration: 'fast',
                     complete: $.proxy(function(){
                         this.controlsShown = true;
@@ -132,7 +134,9 @@ define(['text!/templates/widget.jst', 'app', '/js/models/Widget.js', 'backbone',
         
         onMouseleave: function(){
             if(this.controlsShown && !this.isDragged) {
-                this.controls.fadeOut({
+                this.controls.animate({
+                    opacity: 0.3
+                }, {
                     duration: 'fast',
                     complete: $.proxy(function(){
                         this.controlsShown = false;

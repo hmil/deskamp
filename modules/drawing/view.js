@@ -30,6 +30,8 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             this.canvasHeight = 300;
 
             _.bindAll(this, 'render', 'onMousemove', 'onMouseup', 'onMousedown');
+            
+            this.render();
         },
         
         render: function(){
@@ -42,7 +44,20 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             );
             
             this.ctx = this.$('.drawing_canvas').get(0).getContext('2d');
+            
+            /* draw the current model */
+            var path = this.model.get('path');
+            for(var i in path){
+                var p = path[i];
+                this.ctx.beginPath();
+                this.ctx.moveTo(p[0]);
+                for(var j = 0 ; j < p.length ; j++){
+                    this.ctx.lineTo(p[j].x, p[j].y);
+                }
+                this.ctx.stroke();
+            }
         },
+        
         
         onMousedown: function(evt){
             
@@ -51,6 +66,8 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             var c = this.mapCoords({x: evt.pageX - this.$el.offset().left, y: evt.pageY - this.$el.offset().top});
             
             this.ctx.moveTo(c.x, c.y);
+            
+            this.currentPath = [];
             
             $(window).mousemove(this.onMousemove)
                     .mouseup(this.onMouseup);
@@ -62,11 +79,16 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             var c = this.mapCoords({x: evt.pageX - this.$el.offset().left, y: evt.pageY - this.$el.offset().top});
             
             this.ctx.lineTo(c.x, c.y);
+            this.ctx.stroke();
+            
+            this.currentPath.push(c);
         },
         
         onMouseup: function(evt){
             
-            this.ctx.stroke();
+            this.model.addPath(this.currentPath);
+            this.currentPath = null;
+            
             $(window).unbind('mousemove', this.onMousemove)
                     .unbind('mouseup', this.onMouseup);
         },

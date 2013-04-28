@@ -7,10 +7,13 @@ define([
     return Backbone.View.extend({
 
         
-        initialize: function(){
+        initialize: function(hash){
             
             this.template = _.template( templateString );
-            
+
+
+
+            this.panel =  hash.panel;
             this.render();
 
 
@@ -26,32 +29,40 @@ define([
             
             this.draggable = this.$('#target');
 
+            this.draggable.posintomap = function(pos){
+                var mappos = _this.$el.offset();
+                if (pos){
+                    _this.draggable.offset({
+                        top : mappos.top + pos.top,
+                        left : mappos.left + pos.left
+                    });
+                }
+                else{
+                    var currentpos = _this.draggable.offset();
+                    return {top : currentpos.top - mappos.top, left : currentpos.left - mappos.left};
+                }
+            }
 
+            this.panel.map = this;
+
+            this.draggable.newpos = function(){
+                console.log('newpos');
+                _this.draggable.posintomap({
+                    top : $(document).scrollTop() / _this.panel.getRelativeHeight(),
+                    left : $(document).scrollLeft() / _this.panel.getRelativeWidth()});
+            }
+            window.onscroll = this.draggable.newpos;
             this.$('[data-draggable="draggable"]').draggable({
                 containment: "#map",
 
-                drag: function(event, ui){    
-
-                        mappos = $('#map').offset();
-                        currentpos = _this.draggable.offset();
-
-                        //console.log({top : currentpos.top - mappos.top, left : currentpos.left - mappos.left});
-                        console.log(this.panel.getHeight());
-//                        console.log($(document).scrollLeft());
-//                        console.log((currentpos.left-initialpos.left));
+                drag: function(event, ui){
 
 
-                        //$('body, html').scrollLeft($(document).scrollLeft()-(currentpos.left-initialpos.left)*30);
-                        //$('map').scrollLeft($('map').scrollLeft()+(currentpos.left-initialpos.left)*30);
-                        //$('body, html').scrollTop($(document).scrollTop()-(this.currentPosition.top-this.lastPosition.top)/1.1)
-                        //this.lastPosition = this.currentPosition;
-//                        $('body, html').scrollLeft(200);
-
+                        _this.draggable.height( _this.$el.height() / _this.panel.getRelativeHeight());
+                        _this.draggable.width( _this.$el.width() / _this.panel.getRelativeWidth());
+                        $(document).scrollLeft(_this.draggable.posintomap().left * _this.panel.getRelativeWidth());
+                        $(document).scrollTop(_this.draggable.posintomap().top * _this.panel.getRelativeHeight());
                 }
-
-
-
-                
             });
         }
     
