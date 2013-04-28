@@ -8,8 +8,8 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         resizable: true,
         
         defaultSize: {
-            width: 300,
-            height: 250
+            width: 200,
+            height: 160
         },
         
         /* Good old backbone code */
