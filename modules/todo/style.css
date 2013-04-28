@@ -9,10 +9,34 @@
 
 	text-decoration: none;
 	color: #000;
-	background: #ffc;
+	background: #FFF;
 	display: block;
+
+	border-width:5px;
+    border-style:solid;
+    border-color:black;
+
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+	border-radius: 15px;
 
 	-moz-box-shadow: 2px 2px 7px rgba(22,22,22,.7);
 	-webkit-box-shadow: 2px 2px 7px rgba(22,22,22,.7);
 	box-shadow: 2px 2px 7px rgba(22,22,22,.7);
+
+	overflow: auto;
+	list-style-type:none;
+
+}
+
+ul li {
+    list-style-type: none;
+}
+ul li:before {
+    content: "-";
+}
+
+.tdtitle {
+	text-align: center;
+	font-size:16;
 }
