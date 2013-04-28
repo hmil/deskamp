@@ -20,3 +20,24 @@
     height: 20000px;
     /*background-color: black;*/
 }
+
+.widget_content {
+    
+}
+
+.widget_controls {
+    margin-left: 25px;
+    position: absolute;
+    right: -26px;
+    height: 15px;
+    background-color: black;
+    padding: 5px;
+    border-radius: 3px;
+    float: right;
+    padding-bottom: 40px;
+    opacity: 0.5;
+}
+
+.widget_delete_button {
+    float: right;
+}

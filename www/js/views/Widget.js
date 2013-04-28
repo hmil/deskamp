@@ -1,7 +1,9 @@
 define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], function(WidgetTemplate, Widget) {
 	return Backbone.View.extend({
 		events: {
-			"click .widget_delete_button": "onDelete"
+			"click .widget_delete_button": "onDelete",
+            "mouseenter .widget_container": "onMouseenter",
+            "mouseleave .widget_container": "onMouseleave"
 		},
 		initialize: function(params) {
 			if(!this.model) {
@@ -9,6 +11,8 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
 				app.widgets.add(this.model);
                 this.model.save();
 			}
+            
+            this.isDragged = false;
 
 			// !\ NO INSTANCE should be passed as 'wrapped', only object
 			this.wrapped = params.wrapped;
@@ -17,7 +21,7 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
 
 			this.template = _.template(WidgetTemplate);
 
-			_.bindAll(this, 'render', 'onDelete', 'updatePosition');
+			_.bindAll(this, 'render', 'onDelete', 'updatePosition', 'onMouseenter', 'onMouseleave', 'onDragStart');
             
             this.render();
 		}, 
@@ -33,6 +37,7 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
 		},
 
 		updatePosition: function(event, ui) {
+            this.isDragged = false;
 			this.model.set('coords', ui.position.left+' '+ui.position.top);
 		},
 
@@ -57,13 +62,44 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
 
 			this.$el.draggable({
 				handle: ".widget_header",
+                start: this.onDragStart,
 				stop: this.updatePosition
 			});
 
 			if(wrappedView.resizable === true) {
 				this.$el.resizable();
 			}
-		}
+            
+            this.controls = this.$('.widget_controls');
+            
+            this.controlsShown = false;
+		},
+        
+        onMouseenter: function(){
+            if(!this.controlsShown) {
+                this.controls.fadeIn({
+                    duration: 'fast',
+                    complete: $.proxy(function(){
+                        this.controlsShown = true;
+                    }, this)
+                });
+            }
+        },
+        
+        onMouseleave: function(){
+            if(this.controlsShown && !this.isDragged) {
+                this.controls.fadeOut({
+                    duration: 'fast',
+                    complete: $.proxy(function(){
+                        this.controlsShown = false;
+                    }, this)
+                });
+            }
+        },
+        
+        onDragStart: function(){
+            this.isDragged = true;
+        }
 	});
 });
 
