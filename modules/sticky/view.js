@@ -9,7 +9,7 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         
         defaultSize: {
             width: 300,
-            height: 150
+            height: 250
         },
         
         /* Good old backbone code */
