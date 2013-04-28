@@ -1,17 +1,28 @@
 ﻿<div class="todolist">
     <p class="tdtitle"><%= todo.title %></p>
+    <div class="todo_title_edit" style="display: none;">
+        <input type="text" class="todo_title_editbox" />
+        <br /><br />
+    </div>
 
     <form id="tasks-list">
     <input type="text" class="add_task" />
-    <input type="submit" value=" Add task ">
+    <input type="submit" value="Add ">
     </form>
     <hr>
 
     <ul id="tasks">
         <% _.each(todo.items, function(item) { %>
             <li class="todolist_element">
-                <input type="checkbox" data-name="<%= item.name %>" /> 
-                <%= item.name %>
+                <% if(item.done === true) { %>
+                <input type="checkbox" data-name="<%= item.name %>" id="<%= item.name %>" checked /> 
+                <strike><label for="<%= item.name %>"><%= item.name %></label></strike>
+                <% } else { %>
+                    <input type="checkbox" data-name="<%= item.name %>" id="<%= item.name %>"/> 
+                    <label for="<%= item.name %>"><%= item.name %></label>
+                <% } %>
+
+                <img style="float: right; margin-right: 10px;" src="/img/delete.png" class="todolist_remove_item" title="Remove" data-name="<%= item.name %>" />
             </li>
         <% }); %>
     </ul>

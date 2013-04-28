@@ -15,11 +15,22 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         /* Good old backbone code */
         events: {
             "focusout .sticky_content": "finishEdit", 
-            "sticky_content": 'focustest'
+            "click .sticky_content[data-name=content]": 'editContent', 
+            "focusout .sticky_content_editbox": "finishContentEdit"
         },
 
-        focusin: function() {
-            alert("focusin");
+        editContent: function() {
+            var $content = this.$('.sticky_content');
+            $content.hide();
+            this.$('.sticky_content[data-name=edit]').show();
+            this.$('.sticky_content_editbox').val(this.$('.sticky_content').html());
+        },
+
+        finishContentEdit: function() {
+            this.$('.sticky_content[data-name=edit]').hide();
+            var newContent = $('.sticky_content_editbox').val();
+            this.$('.sticky_content').html(newContent).show();
+            this.model.set('text', newContent);
         },
         
         initialize: function(){
@@ -27,7 +38,7 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             
             this.template = _.template(template);
 
-            _.bindAll(this, 'render', 'finishEdit', 'focusin');
+            _.bindAll(this, 'render', 'finishEdit', 'editContent', 'finishContentEdit');
         },
 
         finishEdit: function() {

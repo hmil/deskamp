@@ -1,4 +1,4 @@
-define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], function(WidgetTemplate, Widget) {
+define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone'], function(WidgetTemplate, Widget, app) {
 	return Backbone.View.extend({
 		events: {
 			"click": "handleWidgetsFocus",
@@ -13,12 +13,14 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
         },
 
         handleWidgetsFocus: function() {
-        	var maxzIndex = App.maxzIndex || 1;
+            if(!app) app = require('app');
+        	var maxzIndex = app.maxzIndex || 1;
         	this.$el.css('z-index', maxzIndex+1);
-        	App.maxzIndex = maxzIndex + 1;
+        	app.maxzIndex = maxzIndex + 1;
         },
        
 		initialize: function(params) {
+           
 			if(!this.model) {
 				this.model = new Widget();
 				app.widgets.add(this.model);
