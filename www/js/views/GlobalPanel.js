@@ -98,8 +98,8 @@ define ([
                                 .css('border-radius', '25px')
                                 .css('min-width', '150px')
                                 .appendTo(this.$el)
-                                .click(function() {
-                                    
+                                .click(function(event) {
+                                    event.preventDefault();
                                     // $(this).remove();
                                     that.$el.bind('contextmenu', contextmenuHandler);
                                 });
@@ -107,7 +107,8 @@ define ([
                             .attr('href', '#')
                             .css('color', 'black')
                             .html('Make a new tag here')
-                            .click(function() {
+                            .click(function(event) {
+                                event.preventDefault();
                                 $menu.html('');
                                 $('<label>')
                                     .attr('for', 'tagName')
@@ -120,6 +121,7 @@ define ([
                                 input.focus();
                                 input.keydown(function(e) {
                                     var keycode = e.keycode || e.which;
+                                    //e.preventDefault();
                                     console.log(keycode);
                                     if(keycode == 13) {
                                         alert("Create tag "+$(this).val());
