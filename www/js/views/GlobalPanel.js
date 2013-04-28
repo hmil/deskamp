@@ -1,9 +1,11 @@
 
 define ([
-     'views/Widget',
-      'modules',
+    'app',
+    'views/Widget',
+    'models/Widget',
+    'modules',
      'backbone'],
-    function(Widget,modules){
+    function(app, Widget, WidgetModel, modules){
             return Backbone.View.extend({
                 
                 events: {
@@ -49,7 +51,11 @@ define ([
                 
                 initialize : function(){
                     
-                    _.bindAll(this, 'ondrop', 'updatePosition', 'trackMouse', 'untrackMouse', 'trackMove');
+                    if(!app) app = require('app');
+                    
+                    _.bindAll(this, 'ondrop', 'updatePosition', 'trackMouse', 'untrackMouse', 'trackMove', 'createWidget');
+                    
+                    app.widgets.on('add', this.createWidget);
                     
                     // We can drop elements into the main panel
                     this.$el.droppable();
@@ -66,11 +72,23 @@ define ([
                     var name = ui.draggable.attr("data-name");
 
                     if(!name) return; // We dont want to drop a new widget
-
+                    
+                    var wid = new WidgetModel({
+                            coords: event.pageX+" "+event.pageY,
+                            wrappedView: modules[name].view,
+                            wrappedName: name
+                        });
+                    
+                    
+                    app.widgets.add(wid);
+                    
+                    wid.save();
+                },
+                
+                createWidget: function(model){
+                    console.log('adding');
                     var wid = new Widget({
-                        wrapped: modules[name].view, 
-                        x: event.pageX, 
-                        y: event.pageY
+                        model: model
                     });
 
                     this.$el.append(wid.$el);

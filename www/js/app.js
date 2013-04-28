@@ -10,11 +10,13 @@ define([
     'views/GlobalPanel',
     'util/Sync',
     'collections/Widgets',
+    'models/Widget',
     'views/Map',
+    'modules',
     'socket.io',
     'backbone', 
     'Router'],
-    function(WidgetBar, GlobalPanel, Sync, Widgets,Map){
+    function(WidgetBar, GlobalPanel, Sync, Widgets, Widget, Map, modules){
 
 
     // App is a singleton object
@@ -42,12 +44,14 @@ define([
         var sync = Sync(socket);
         
         // Server pushing widgets
-        socket.on('create:widget', function(data){
-            var widget = new Widget(data);
+        socket.on('create:widget', $.proxy(function(data){
+            console.log("getting a widget");
+            console.log('data name :'+data.wrappedName);
+            var widget = new Widget(_.extend(data, {wrappedView: modules[data.wrappedName].view}));
             this.widgets.add(widget);
             sync.makeLive(widget);
             widget.emit('sync'); // The server pushed this so it seems ok to fire this event
-        });
+        }, this));
             
         Backbone.sync = sync.sync;
         
@@ -60,7 +64,7 @@ define([
         this.widgetBar = new WidgetBar({
             el: '#widget_bar'
         });
-        this.globallPanel = new GlobalPanel({
+        this.globalPanel = new GlobalPanel({
             el: '#global_panel'
         });
         this.map = new Map({

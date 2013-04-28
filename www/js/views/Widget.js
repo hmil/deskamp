@@ -21,9 +21,7 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
             this.isDragged = false;
 
 			// !\ NO INSTANCE should be passed as 'wrapped', only object
-			this.wrapped = params.wrapped;
-			this.xPos = params.x || 0;
-			this.yPos = params.y || 0;
+			this.wrapped = this.model.get('wrappedView');
 
 			this.template = _.template(WidgetTemplate);
 
@@ -61,9 +59,11 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
 			this.$el.width(width);
 			this.$el.height(height);
 			this.$el.css('position', 'absolute');
+            
+            var coords = this.model.get('coords').split(' ');
 			this.$el.offset({
-				top: this.yPos, 
-				left: this.xPos
+				left: coords[0], 
+				top: coords[1]
 			});
 
 			this.$el.draggable({

@@ -7,9 +7,10 @@ var app = express()
 	, io = require('socket.io').listen(server)
 	, mongoose = require('mongoose/')
 	, database = mongoose.connect('mongodb://localhost/hackathon', function(err) { if(err) throw err; })
+    , socketAPI = require('./socketAPI');
 
 db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));                              b
+db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
     console.log('Sucessfully connected to base');
 
@@ -34,6 +35,7 @@ db.once('open', function () {
     //Configures the application
     require('./config.js')(app);
 
+    socketAPI(io);
 
     var events = require ('./events.js')(io, WidgetModel);
     console.log('will create test widget')

@@ -7,17 +7,17 @@ module.exports = function(socket, Widget){
     this.create = function (model){
         var wid= new Widget(model);
         wid.id = nextId();
-        console.log('create ' + wid);
+        // console.log('create ' + wid);
         wid.save(); // doesn't work?
-        console.log(wid);
+        // console.log(wid);
         //socket.broadcast.emit('create:widget',wid);
         return wid.id;
     };
 
     this.update=function(model){
         Widget.findOneAndUpdate({id : model.id},model);
-        console.log('updated');
-        console.log(model);
+        // console.log('updated');
+        // console.log(model);
 
     }
 
