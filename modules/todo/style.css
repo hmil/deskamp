@@ -3,5 +3,16 @@
 */
 
 .todolist {
-	
+	width   : 100%;
+    height  : 100%;
+
+
+	text-decoration: none;
+	color: #000;
+	background: #ffc;
+	display: block;
+
+	-moz-box-shadow: 2px 2px 7px rgba(22,22,22,.7);
+	-webkit-box-shadow: 2px 2px 7px rgba(22,22,22,.7);
+	box-shadow: 2px 2px 7px rgba(22,22,22,.7);
 }

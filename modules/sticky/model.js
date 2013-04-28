@@ -3,7 +3,7 @@
     return Backbone.Model.extend({
         
         defaults: {
-            title: 'Default sticker title'
+            text: 'New sticky note'
         }
         
     });

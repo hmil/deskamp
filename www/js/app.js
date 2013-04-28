@@ -10,10 +10,12 @@ define([
     'views/GlobalPanel',
     'util/Sync',
     'collections/Widgets',
+    'views/Map',
     'socket.io',
     'backbone', 
     'Router'],
-    function(WidgetBar, GlobalPanel, Sync, Widgets){
+    function(WidgetBar, GlobalPanel, Sync, Widgets,Map){
+
 
     // App is a singleton object
     var App = {};
@@ -55,6 +57,9 @@ define([
         });
         this.globallPanel = new GlobalPanel({
             el: '#global_panel'
+        });
+        this.map = new Map({
+            el: '#map'
         });
         
         console.log("app initialized");
