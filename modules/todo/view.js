@@ -15,7 +15,10 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         /* Good old backbone code */
         
         events: {
-            "click [data-role=text]": "onStartEdit"
+            "click [data-role=text]": "onStartEdit",
+            "submit #tasks-list": "onSub",
+            "click #tasks li a ": "del"
+
         },
         
         
@@ -41,6 +44,27 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         
         onStartEdit: function(){
             console.log("hello : "+Session.get('me'));
+        },
+
+        onSub: function(){
+            var i= 0;
+            console.log("onSub");
+            if (  $("#task").val() != "" ) {
+
+                var task = $("#task").val();
+                console.log($("#task").val());
+                $("#tasks").append("<li id='task-"+i+"'>"+ task +" <a href='#'>x</a></li>");
+                $("#task").val("");
+                i++;
+            }
+        return false;
+        },
+
+        del: function() {
+            console.log($(this));
+            $(this).hide();
+
+
         }
     });
 
