@@ -3,8 +3,14 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
 		events: {
 			"click .widget_delete_button": "onDelete",
             "mouseenter .widget_container": "onMouseenter",
-            "mouseleave .widget_container": "onMouseleave"
+            "mouseleave .widget_container": "onMouseleave",
+            "mousedown": "preventProp"
 		},
+        
+        preventProp: function(evt){
+            evt.stopPropagation();
+        },
+       
 		initialize: function(params) {
 			if(!this.model) {
 				this.model = new Widget();
@@ -49,8 +55,8 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
 			});
 			wrappedView.render();
 
-			var width = wrappedView.defaultSize.width || 200;
-			var height = wrappedView.defaultSize.height || 300;
+			var width = (wrappedView.defaultSize) ? wrappedView.defaultSize.width : 200;
+			var height = (wrappedView.defaultSize) ? wrappedView.defaultSize.height : 300;
 
 			this.$el.width(width);
 			this.$el.height(height);
