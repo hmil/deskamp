@@ -1,9 +1,11 @@
 ﻿<div class="todolist">
-    <h3><%= todo.title %></h3>
+    <p class="tdtitle"><%= todo.title %></p>
 
     <form id="tasks-list">
     <input type="text" class="add_task" />
+    <input type="submit" value=" Add task ">
     </form>
+    <hr>
 
     <ul id="tasks">
         <% _.each(todo.items, function(item) { %>

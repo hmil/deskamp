@@ -8,8 +8,8 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         resizable: true,
         
         defaultSize: {
-            width: 300,
-            height: 150
+            width: 200,
+            height: 300
         },
         
         /* Good old backbone code */
@@ -25,10 +25,7 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         
         
         initialize: function(){
-            if(!this.model){
-                console.log("User created a new todo list");
-                this.model = new Model();
-            }
+            this.model = new Model(this.model);
             
             this.template = _.template(template);
 
