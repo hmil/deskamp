@@ -13,12 +13,14 @@ define(['text!/templates/widget.jst', 'app', '/js/models/Widget.js', 'backbone',
         },
 
         handleWidgetsFocus: function() {
+            if(!App) App = require('app');
         	var maxzIndex = App.maxzIndex || 1;
         	this.$el.css('z-index', maxzIndex+1);
         	App.maxzIndex = maxzIndex + 1;
         },
        
 		initialize: function(params) {
+           
 			if(!this.model) {
 				this.model = new Widget();
 				app.widgets.add(this.model);
