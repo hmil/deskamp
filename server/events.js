@@ -1,26 +1,17 @@
-
+idmax = 1;
 module.exports = function(socket, Widget){
-
     function nextId(){
-        console.log('enter nextId()')
-        Widget.find({id : 1},function(err,results){
-            console.log('enter callback');
-            if (err) throw err;
-            console.log('count : '+ results.length);
-        });
-        var maxid = 0;
-        //console.log ('count : '+maxid)
-        if (maxid == 0) return 1;
-        return maxid+1;
+        return idmax++;
     }
 
     this.create = function (model){
         var wid= new Widget(model);
         wid.id = nextId();
-        wid.save();
+        console.log('create ' + wid);
+        wid.save(); // doesn't work?
         console.log(wid);
-        return wid._id;
-        //socket.emit(); wid._id
+        socket.broadcast.emit('create:widget',wid);
+        return wid.id;
     };
 
     this.update=function(model){
