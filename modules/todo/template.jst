@@ -1,10 +1,16 @@
 ﻿<div class="todolist">
-    <h3>This is a todolist</h3>
+    <h3><%= todo.title %></h3>
 
     <form id="tasks-list">
-    <input type="text" id="task" />
+    <input type="text" class="add_task" />
     </form>
 
-    <ul id="tasks"></ul>
-
-</div>
+    <ul id="tasks">
+        <% _.each(todo.items, function(item) { %>
+            <li class="todolist_element">
+                <input type="checkbox" data-name="<%= item.name %>" /> 
+                <%= item.name %>
+            </li>
+        <% }); %>
+    </ul>
+</div>    
