@@ -9,7 +9,7 @@ var app = express()
 	, database = mongoose.connect('mongodb://localhost/hackathon', function(err) { if(err) throw err; })
 
 db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
+db.on('error', console.error.bind(console, 'connection error:'));                              b
 db.once('open', function () {
     console.log('Sucessfully connected to base');
 

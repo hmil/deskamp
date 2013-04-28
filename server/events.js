@@ -10,7 +10,7 @@ module.exports = function(socket, Widget){
         console.log('create ' + wid);
         wid.save(); // doesn't work?
         console.log(wid);
-        socket.broadcast.emit('create:widget',wid);
+        //socket.broadcast.emit('create:widget',wid);
         return wid.id;
     };
 
