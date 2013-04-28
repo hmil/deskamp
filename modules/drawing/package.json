@@ -1,0 +1,11 @@
+{
+    "name"      : "drawing",
+    "version"   : "0.0.1",
+    "author"    : "",
+    
+    "view"      : "view.js",
+    "style"     : "style.css",
+    
+    "icon"      : "icon.png",
+    "title"     : "Drawing"
+}
