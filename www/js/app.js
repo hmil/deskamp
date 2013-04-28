@@ -8,9 +8,12 @@
 define([
     'views/WidgetBar',
     'views/GlobalPanel',
+    'util/Sync',
+    'collections/Widgets',
+    'socket.io',
     'backbone', 
     'Router'],
-    function(WidgetBar,GlobalPanel){
+    function(WidgetBar, GlobalPanel, Sync, Widgets){
 
     // App is a singleton object
     var App = {};
@@ -21,6 +24,12 @@ define([
     App.init = function () {
         // Creates the router
         this.router = new (require('Router'));
+        
+        this.widgets = new Widgets();
+        
+        var socket = io.connect('/');
+        
+        Backbone.sync = Sync.create(socket);
         
         if(!Backbone.history.start()){
             window.location.hash = '/';

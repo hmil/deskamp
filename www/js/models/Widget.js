@@ -1,10 +1,8 @@
 define(['backbone'], function() {
 	return Backbone.Model.extend({
-		url: "widget",
 		
-		default: {
-			x: 0, 
-			y: 0, 
+		defaults: {
+			coords: "0 0", 
 			title: "Default widget title"
 		}, 
 
