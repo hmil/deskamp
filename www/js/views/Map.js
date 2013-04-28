@@ -36,9 +36,15 @@ define([
                     var viewportWidth = $(window).width();
                     var viewportHeight = $(window).height();
 
-                    console.log("drag");
-                    $(window).scrollLeft(viewportWidth * ($('#target').offsetLeft-x)/$('#target').width());
-                    $(window).scrollTop(viewportHeight * ($('#target').offsetTop-y)/$('#target').height());
+                    var vScrollPosition = $(document).scrollTop(); //retrieve the document scroll ToP position
+                    var hScrollPosition = $(document).scrollLeft();
+                    console.log(vScrollPosition);
+                    console.log(hScrollPosition);
+
+                     window.scrollTo(100, 100);
+
+                    //$(document).scrollLeft(viewportWidth * ($('#target').offsetLeft-x)/$('#target').width());
+                    //$(document).scrollTop(viewportHeight * ($('#target').offsetTop-y)/$('#target').height());
 
                 }
 
