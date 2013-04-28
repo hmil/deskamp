@@ -26,7 +26,12 @@ define([
     App.init = function () {
         // Creates the router
         this.router = new (require('Router'));
-        
+        this.router.on('route:scrollTo', function(left, top) {
+                    $('html, body').animate({
+                        scrollTop: top || 0,
+                        scrollLeft: left || 0
+                    }, 1000);
+                });
         this.widgets = new Widgets();
         
        

@@ -14,7 +14,12 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         
         /* Good old backbone code */
         events: {
-            "focusout .sticky_content": "finishEdit"
+            "focusout .sticky_content": "finishEdit", 
+            "sticky_content": 'focustest'
+        },
+
+        focusin: function() {
+            alert("focusin");
         },
         
         initialize: function(){
@@ -25,7 +30,7 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             
             this.template = _.template(template);
 
-            _.bindAll(this, 'render', 'finishEdit');
+            _.bindAll(this, 'render', 'finishEdit', 'focusin');
         },
 
         finishEdit: function() {
