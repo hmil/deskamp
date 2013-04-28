@@ -24,6 +24,11 @@
         	 _.find(this.get('items'), function(i) {
         		return itemName == i.name;
         	}).done = false;
+        }, 
+        removeItem: function(itemName) {
+        	this.set('items', _.filter(this.get('items'), function(item) {
+        		return item.name != itemName;
+        	}));
         }
         
     });
