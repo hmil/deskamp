@@ -3,7 +3,7 @@
     return Backbone.Model.extend({
         
         defaults: {
-            title: 'bite'
+            text: 'New sticky note'
         }
         
     });

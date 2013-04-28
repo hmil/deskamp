@@ -1,9 +1,19 @@
-define(['text!/templates/widget.jst','backbone'], function(WidgetTemplate) {
+define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], function(WidgetTemplate, Widget) {
 	return Backbone.View.extend({
 		events: {
-			"click .widget_delete_button": "delete"
+			"click .widget_delete_button": "onDelete",
+            "mouseenter .widget_container": "onMouseenter",
+            "mouseleave .widget_container": "onMouseleave"
 		},
 		initialize: function(params) {
+			if(!this.model) {
+				this.model = new Widget();
+				app.widgets.add(this.model);
+                this.model.save();
+			}
+            
+            this.isDragged = false;
+
 			// !\ NO INSTANCE should be passed as 'wrapped', only object
 			this.wrapped = params.wrapped;
 			this.xPos = params.x || 0;
@@ -11,17 +21,24 @@ define(['text!/templates/widget.jst','backbone'], function(WidgetTemplate) {
 
 			this.template = _.template(WidgetTemplate);
 
-			_.bindAll(this, 'render', 'delete');
+			_.bindAll(this, 'render', 'onDelete', 'updatePosition', 'onMouseenter', 'onMouseleave', 'onDragStart');
             
             this.render();
 		}, 
 
-		delete: function() {
+		onDelete: function() {
 			this.$el.remove();
 			if(this.wrapped.remove) {
 				this.wrapped.remove();
 			}
-			console.log("Removing, but /!\\ remove() undefined in wrapped");
+			
+            app.widgets.remove(this.model);
+            this.model.destroy();
+		},
+
+		updatePosition: function(event, ui) {
+            this.isDragged = false;
+			this.model.set('coords', ui.position.left+' '+ui.position.top);
 		},
 
 		render: function() {
@@ -43,11 +60,46 @@ define(['text!/templates/widget.jst','backbone'], function(WidgetTemplate) {
 				left: this.xPos
 			});
 
-			this.$el.draggable();
+			this.$el.draggable({
+				handle: ".widget_header",
+                start: this.onDragStart,
+				stop: this.updatePosition
+			});
+
 			if(wrappedView.resizable === true) {
 				this.$el.resizable();
 			}
-		}
+            
+            this.controls = this.$('.widget_controls');
+            
+            this.controlsShown = false;
+		},
+        
+        onMouseenter: function(){
+            if(!this.controlsShown) {
+                this.controls.fadeIn({
+                    duration: 'fast',
+                    complete: $.proxy(function(){
+                        this.controlsShown = true;
+                    }, this)
+                });
+            }
+        },
+        
+        onMouseleave: function(){
+            if(this.controlsShown && !this.isDragged) {
+                this.controls.fadeOut({
+                    duration: 'fast',
+                    complete: $.proxy(function(){
+                        this.controlsShown = false;
+                    }, this)
+                });
+            }
+        },
+        
+        onDragStart: function(){
+            this.isDragged = true;
+        }
 	});
 });
 

@@ -13,12 +13,14 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         },
         
         /* Good old backbone code */
-        
         events: {
-            "click [data-role=text]": "onStartEdit"
+            "focusout .sticky_content": "finishEdit", 
+            "sticky_content": 'focustest'
         },
-        
-        
+
+        focusin: function() {
+            alert("focusin");
+        },
         
         initialize: function(){
             if(!this.model){
@@ -27,7 +29,16 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             }
             
             this.template = _.template(template);
+
+            _.bindAll(this, 'render', 'finishEdit', 'focusin');
+        },
+
+        finishEdit: function() {
+            var newContent = this.$('.sticky_content').val();
+
+            this.model.set('content', newContent);
             
+            console.log("edited");
         },
         
         render: function(){
@@ -37,10 +48,6 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
                     this.model.toJSON()
                 )
             );
-        },
-        
-        onStartEdit: function(){
-            console.log("hello : "+Session.get('me'));
         }
     });
 
