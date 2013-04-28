@@ -8,17 +8,22 @@
         }, 
 
         initialize: function() {
-        	_.bindAll(this, 'addItem', 'checkItem');
+        	_.bindAll(this, 'addItem', 'checkItem', 'uncheckItem');
         },
 
         addItem: function(item) {
         	this.get('items').push(item);
-        	//console.log("Added -> "+this.items[this.items.length-1].name);
         }, 
         checkItem: function(itemName) {
+        	console.log("Checking "+itemName);
         	 _.find(this.get('items'), function(i) {
         		return itemName == i.name;
         	}).done = true;
+        }, 
+        uncheckItem: function(itemName) {
+        	 _.find(this.get('items'), function(i) {
+        		return itemName == i.name;
+        	}).done = false;
         }
         
     });

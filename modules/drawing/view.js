@@ -22,9 +22,7 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         },
         
         initialize: function(){
-            if(!this.model){
-                this.model = new Model();
-            }
+            this.model = new Model(this.model);
             
             this.template = _.template(template);
             

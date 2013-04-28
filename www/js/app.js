@@ -50,7 +50,7 @@ define([
             var widget = new Widget(_.extend(data, {wrappedView: modules[data.wrappedName].view}));
             this.widgets.add(widget);
             sync.makeLive(widget);
-            widget.emit('sync'); // The server pushed this so it seems ok to fire this event
+            widget.trigger('sync'); // The server pushed this so it seems ok to fire this event
         }, this));
             
         Backbone.sync = sync.sync;
