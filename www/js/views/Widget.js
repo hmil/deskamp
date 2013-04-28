@@ -31,7 +31,7 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
 
 		updatePosition: function(event, ui) {
 			this.model.set('x', ui.position.left);
-			this.mosel.set('y', ui.position.top);
+			this.model.set('y', ui.position.top);
 		},
 
 		render: function() {

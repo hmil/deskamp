@@ -1,9 +1,10 @@
 ﻿<div class="sticky_container">
-    <h3>This is a sticky note</h3>
-    <p data-role="text" >
-        Click me to edit (if it works)
-        This is : <%= title %>
-    </p>
+    <h3 class="sticky_title"><%= title %></h3>
+    <div class="sticky_title_edit" style="display: none;"><input type="text" class="sticky_title_editbox" /></div>
+    <p class="sticky_content">Insert content here</p>
+    <div class="sticky_content_edit" style="display: none; padding-left: 10px">
+        <textarea style="width: 90%; height: 70%;" class="sticky_content_editbox"></textarea>
+    </div>
 </div>
 
 
