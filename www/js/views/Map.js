@@ -48,8 +48,9 @@ define([
             this.draggable.newpos = function(){
                 console.log('newpos');
                 _this.draggable.posintomap({
-                    top : $(document).scrollTop() / _this.panel.getRelativeHeight(),
-                    left : $(document).scrollLeft() / _this.panel.getRelativeWidth()});
+                    top : _this.$el.height() * $(document).scrollTop() / _this.panel.$el.height(),
+                    left : _this.$el.width() * $(document).scrollLeft() / _this.panel.$el.width()});
+                console.log(_this.draggable.posintomap())
             }
             window.onscroll = this.draggable.newpos;
             this.$('[data-draggable="draggable"]').draggable({
