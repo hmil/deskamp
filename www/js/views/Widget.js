@@ -1,6 +1,7 @@
-define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], function(WidgetTemplate, Widget) {
+define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone', 'jqueryUI'], function(WidgetTemplate, App, Widget) {
 	return Backbone.View.extend({
 		events: {
+			"click": "handleWidgetsFocus",
 			"click .widget_delete_button": "onDelete",
             "mouseenter .widget_container": "onMouseenter",
             "mouseleave .widget_container": "onMouseleave",
@@ -9,6 +10,12 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
         
         preventProp: function(evt){
             evt.stopPropagation();
+        },
+
+        handleWidgetsFocus: function() {
+        	var maxzIndex = App.maxzIndex || 1;
+        	this.$el.css('z-index', maxzIndex+1);
+        	App.maxzIndex = maxzIndex + 1;
         },
        
 		initialize: function(params) {
@@ -25,7 +32,9 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
 
 			this.template = _.template(WidgetTemplate);
 
-			_.bindAll(this, 'render', 'onDelete', 'updatePosition', 'onMouseenter', 'onMouseleave', 'onDragStart');
+			_.bindAll(this, 'render', 'onDelete', 'updatePosition', 
+				'onMouseenter', 'onMouseleave', 'onDragStart', 
+				'handleWidgetsFocus');
             
             this.render();
 		}, 
@@ -72,8 +81,9 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
 				stop: this.updatePosition
 			});
 
+			this.$el.resizable();
 			if(wrappedView.resizable === true) {
-				this.$el.resizable();
+				console.log("resizable");
 			}
             
             this.controls = this.$('.widget_controls');
