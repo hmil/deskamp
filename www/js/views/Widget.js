@@ -6,6 +6,8 @@ define(['text!/templates/widget.jst','backbone'], function(WidgetTemplate) {
 		initialize: function(params) {
 			// !\ NO INSTANCE should be passed as 'wrapped', only object
 			this.wrapped = params.wrapped;
+			this.xPos = params.x || 0;
+			this.yPos = params.y || 0;
 
 			this.template = _.template(WidgetTemplate);
 
@@ -15,7 +17,11 @@ define(['text!/templates/widget.jst','backbone'], function(WidgetTemplate) {
 		}, 
 
 		delete: function() {
-			this.model.destroy();
+			this.$el.remove();
+			if(this.wrapped.remove) {
+				this.wrapped.remove();
+			}
+			console.log("Removing, but /!\\ remove() undefined in wrapped");
 		},
 
 		render: function() {
@@ -26,8 +32,21 @@ define(['text!/templates/widget.jst','backbone'], function(WidgetTemplate) {
 			});
 			wrappedView.render();
 
+			var width = wrappedView.defaultSize.width || 200;
+			var height = wrappedView.defaultSize.height || 300;
+
+			this.$el.width(width);
+			this.$el.height(height);
+			this.$el.css('position', 'absolute');
+			this.$el.offset({
+				top: this.yPos, 
+				left: this.xPos
+			});
+
 			this.$el.draggable();
-			this.$el.resizable();
+			if(wrappedView.resizable === true) {
+				this.$el.resizable();
+			}
 		}
 	});
 });

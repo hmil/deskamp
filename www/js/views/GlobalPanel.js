@@ -19,6 +19,9 @@ define ([
                 
                 ondrop: function(event, ui){
                     var name = ui.draggable.attr("data-name");
+
+                    if(!name) return;
+                    
                     console.log(name);
                     
                     console.log(modules);
@@ -26,7 +29,9 @@ define ([
                     var test = new (modules[name].view);
 
                     var wid = new Widget({
-                        wrapped: modules[name].view
+                        wrapped: modules[name].view, 
+                        x: event.pageX, 
+                        y: event.pageY
                     });
 
                     this.$el.append(wid.$el);
