@@ -8,10 +8,13 @@
 define([
     'views/WidgetBar',
     'views/GlobalPanel',
-    'views/Map',
+    'util/Sync',
+    'collections/Widgets',
+    'socket.io',
     'backbone', 
     'Router'],
-    function(WidgetBar,GlobalPanel,Map){
+    function(WidgetBar, GlobalPanel, Sync, Widgets){
+
 
     // App is a singleton object
     var App = {};
@@ -22,6 +25,25 @@ define([
     App.init = function () {
         // Creates the router
         this.router = new (require('Router'));
+        
+        this.widgets = new Widgets();
+        
+       
+        
+        var socket = io.connect('/');
+        
+        // Creates a sync with the socket
+        var sync = Sync(socket);
+        
+        // Server pushing widgets
+        socket.on('create:widget', function(data){
+            var widget = new Widget(data);
+            this.widgets.add(widget);
+            sync.makeLive(widget);
+            widget.emit('sync'); // The server pushed this so it seems ok to fire this event
+        });
+            
+        Backbone.sync = sync.sync;
         
         if(!Backbone.history.start()){
             window.location.hash = '/';

@@ -1,12 +1,13 @@
 define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], function(WidgetTemplate, Widget) {
 	return Backbone.View.extend({
 		events: {
-			"click .widget_delete_button": "delete"
+			"click .widget_delete_button": "onDelete"
 		},
 		initialize: function(params) {
 			if(!this.model) {
 				this.model = new Widget();
-				this.model.save();
+				app.widgets.add(this.model);
+                this.model.save();
 			}
 
 			// !\ NO INSTANCE should be passed as 'wrapped', only object
@@ -16,22 +17,23 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], funct
 
 			this.template = _.template(WidgetTemplate);
 
-			_.bindAll(this, 'render', 'delete', 'updatePosition');
+			_.bindAll(this, 'render', 'onDelete', 'updatePosition');
             
             this.render();
 		}, 
 
-		delete: function() {
+		onDelete: function() {
 			this.$el.remove();
 			if(this.wrapped.remove) {
 				this.wrapped.remove();
 			}
-			else console.log("Removing, but /!\\ remove() undefined in wrapped");
+			
+            app.widgets.remove(this.model);
+            this.model.destroy();
 		},
 
 		updatePosition: function(event, ui) {
-			this.model.set('x', ui.position.left);
-			this.mosel.set('y', ui.position.top);
+			this.model.set('coords', ui.position.left+' '+ui.position.top);
 		},
 
 		render: function() {
