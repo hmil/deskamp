@@ -6,12 +6,14 @@ var app = express()
 	, server = http.createServer(app)
 	, io = require('socket.io').listen(server)
 	, mongoose = require('mongoose/')
-	, database = mongoose.connect('mongodb://localhost/hackathon', function(err) { if(err) throw err; });
+	, database = mongoose.connect('mongodb://localhost/hackathon', function(err) { if(err) throw err; })
 
-// var WidgetSchema = new mongoose.Schema({
-// 	name: String
-// });
-// var WidgetModel = mongoose.model('widgets', WidgetSchema);
+db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function () { console.log('Sucessfully connected too base')});
+
+ var WidgetSchema = require('./schemas/widget')(mongoose);
+ var WidgetModel = mongoose.model('widgets', WidgetSchema);
 
 // var myWidget = new WidgetModel({name: "My uber widget"});
 
@@ -32,7 +34,19 @@ require('./modules.js')(app);
 require('./config.js')(app);
 
 
-
+var events = require ('./events.js')(io, WidgetModel);
+console.log('will create test widget')
+var thisisatest = {
+    width:100,
+    height:100,
+    x:100,
+    y:100,
+    cid:2,
+    data:'GROSSES FESSES'
+}
+thisisatest._id = events.create(thisisatest);
+thisisatest.x=200;
+events.update(thisisatest);
 /*
 
 API calls : 
@@ -49,5 +63,9 @@ DELETE 	/widgets/delete/:id
 server.listen(app.get('port'), function() {
 	console.log("server running and listening in on port "+app.get('port'));
 });
+
+
+
+
 
 mongoose.connection.close();
