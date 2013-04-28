@@ -1,10 +1,9 @@
 ﻿
 
 define(function(){
-    return {
-        create: function(socket){
-        
-            var sync = function(method, model, options){
+    return function(socket){
+        var Sync = {
+            sync: function(method, model, options){
                 
                 switch(method){
                     case 'create':
@@ -12,7 +11,7 @@ define(function(){
                         socket.emit('create:'+model.url, model.toJSON());
                         
                         console.log('creating');
-                        makeLive(model);
+                        Sync.makeLive(model);
                         break;
                     case 'update':
                         
@@ -24,7 +23,7 @@ define(function(){
                         
                         socket.emit('delete:'+model.url, model.toJSON());
                         
-                        unmakeLive(model);
+                        Sync.unmakeLive(model);
                         console.log('deleting');
                         break;
                     case 'read':
@@ -34,14 +33,14 @@ define(function(){
                         console.log('reading');
                         break;
                 }
-            };
-            
-            function makeLive(model){
+            },
+        
+            makeLive: function(model){
                 console.log(model);
                 for(var i in model.attributes){
                     model.on('change:'+i, (function(attr){
                         return function(model, value, option){
-                            sync('update', {
+                            Backbone.sync('update', {
                                 url: model.url,
                                 toJSON: function(){ return this.attributes;},
                                 attributes: _.pick(model.toJSON(), attr)
@@ -49,14 +48,22 @@ define(function(){
                         };
                     })(i));
                 }
-                model.on('destroy', function(){ sync('delete', model); });
-            }
+                model.on('destroy', function(){ Backbone.sync('delete', model); });
+                
+                model.once('sync', function(){
+                    socket.on('update:'+model.url+'_'+model.id, function(model){
+                        console.log("server updated client data :");
+                        console.log(model);
+                    });
+                });
+            },
             
-            function unmakeLive(model){
+            unmakeLive: function(model){
                 model.off();
+                socket.removeAllListeners('update:'+model.url+'_'+model.id);
             }
-            
-            return sync;
-        }
+        };
+        
+        return Sync;
     };
 });
