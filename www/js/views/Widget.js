@@ -1,4 +1,4 @@
-define(['text!/templates/widget.jst', 'app', '/js/models/Widget.js', 'backbone', 'lib/JSON'], function(WidgetTemplate, App, Widget) {
+define(['text!/templates/widget.jst', '/js/models/Widget.js', 'backbone'], function(WidgetTemplate, Widget) {
 	return Backbone.View.extend({
 		events: {
 			"click": "handleWidgetsFocus",

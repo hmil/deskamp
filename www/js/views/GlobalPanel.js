@@ -1,8 +1,8 @@
 
 define ([
     'app',
-    'views/Widget',
-    'models/Widget',
+    '/js/views/Widget.js',
+    '/js/models/Widget.js',
     'modules',
      'backbone'],
     function(app, Widget, WidgetModel, modules){
@@ -25,9 +25,10 @@ define ([
                     };
 
                     $(window).mousemove(this.trackMove).mouseup(this.untrackMouse);
-                },
+                                    },
                 
                 trackMove: function(event) {
+                    console.log('trackmove');
                     event.preventDefault();
                     event.stopPropagation();
                     event = event || window.event;
@@ -38,6 +39,7 @@ define ([
                     $('body, html').scrollLeft($(document).scrollLeft()-(this.currentPosition.left-this.lastPosition.left)/1.1)
                     $('body, html').scrollTop($(document).scrollTop()-(this.currentPosition.top-this.lastPosition.top)/1.1)
                     this.lastPosition = this.currentPosition;
+                    if (this.map) this.map.draggable.newpos();
                 },
 
                 untrackMouse: function(event) {
@@ -48,7 +50,24 @@ define ([
                             .unbind('mouseup', this.untrackMouse);
                     this.$el.css('cursor', 'default');
                 },
-                
+
+                getHeight : function(event){
+                    return this.$el.height();
+                },
+
+                getWidth : function(event){
+                    return this.$el.width();
+                },
+
+                getRelativeHeight : function(event){
+                    return this.$el.height() / $(window).height();
+                },
+
+                getRelativeWidth : function(event){
+                    return this.$el.width() / $(window).width();
+
+                },
+
                 initialize : function(){
                     
                     if(!app) app = require('app');
@@ -157,7 +176,6 @@ define ([
 
                     this.$el.append(wid.$el);
                 }
-
 
             })
     }

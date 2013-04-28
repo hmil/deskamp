@@ -68,7 +68,8 @@ define([
             el: '#global_panel'
         });
         this.map = new Map({
-            el: '#map'
+            el: '#map',
+            panel : this.globalPanel
         });
         
         console.log("app initialized");
