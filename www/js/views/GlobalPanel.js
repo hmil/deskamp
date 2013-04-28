@@ -19,13 +19,18 @@ define ([
                     event.stopPropagation();
 
                     this.$el.css('cursor', 'move');
-                    this.lastPosition = {
-                        left: event.pageX, 
-                        top: event.pageY
+                    this.initialPosition = {
+                        left: event.clientX, 
+                        top: event.clientY
+                    };
+                    
+                    this.initialScroll = {
+                        left: $(document).scrollLeft(),
+                        top: $(document).scrollTop()
                     };
 
                     $(window).mousemove(this.trackMove).mouseup(this.untrackMouse);
-                                    },
+                },
                 
                 trackMove: function(event) {
                     console.log('trackmove');
@@ -33,12 +38,15 @@ define ([
                     event.stopPropagation();
                     event = event || window.event;
                     this.currentPosition = {
-                        left: event.pageX, 
-                        top: event.pageY
-                    }
-                    $('body, html').scrollLeft($(document).scrollLeft()-(this.currentPosition.left-this.lastPosition.left)/1.1)
-                    $('body, html').scrollTop($(document).scrollTop()-(this.currentPosition.top-this.lastPosition.top)/1.1)
-                    this.lastPosition = this.currentPosition;
+                        left: event.clientX, 
+                        top: event.clientY
+                    };
+                    
+                    console.log("scroll !");
+                    
+                    $(document).scrollLeft(this.initialScroll.left - (this.currentPosition.left - this.initialPosition.left));
+                    $(document).scrollTop(this.initialScroll.top - (this.currentPosition.top - this.initialPosition.top));
+
                     if (this.map) this.map.draggable.newpos();
                 },
 
