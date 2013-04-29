@@ -70,11 +70,10 @@ define([
         });
         
         this.scrollTo = function(xPos, yPos, delay) {
-            delay = delay || 1000;
             $('body, html').animate({
                 scrollTop: yPos,
                 scrollLeft: xPos
-            }, delay);
+            }, delay || 1000);
         }
         console.log("app initialized");
     };

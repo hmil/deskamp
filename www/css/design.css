@@ -1,5 +1,6 @@
 body {
-        background-image: url(/img/wpwood2.jpg);
+    background-image: url(/img/wpwood2.jpg);
+    overflow: hidden;
 }
 
 #widget_bar {
@@ -114,4 +115,23 @@ background-color: white;
     border-width:1px;
     border-style:solid;
     border-color:blue;
+}
+
+#rightclickmenu {
+    position: absolute;
+    padding: 10px;
+    background-color: White;
+    z-index: 100;
+    border-radius: 25px;
+    min-width: 150px;
+    display: none;
+}
+
+#createTagLink {
+    color: black;
+    display: none;
+}
+
+#createTagForm {
+    display: none;
 }

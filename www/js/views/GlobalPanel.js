@@ -10,10 +10,30 @@ define ([
             return Backbone.View.extend({
                 
                 events: {
-                    'drop': 'ondrop'
+                    'drop': 'ondrop', 
+                    'click #createTagLink': 'createTag', 
+                    'keydown #newTagName': 'checkNewTagForm', 
+                    'click': 'checkHideContextMenu'
                 },
                 lastPosition: {}, 
                 currentPosition: {},
+
+                initialize : function(){
+                    
+                    if(!app) app = require('app');
+                    
+                    _.bindAll(this, 'ondrop', 'updatePosition', 'trackMouse', 'untrackMouse', 
+                        'trackMove', 'createWidget', 'createTag', 'checkNewTagForm', 'tagContextMenuHandler');
+                    
+                    app.widgets.on('add', this.createWidget);
+                    
+                    // We can drop elements into the main panel
+                    this.$el.droppable();
+
+                    this.$el.bind('contextmenu', this.tagContextMenuHandler);
+                    
+                    this.$el.on('mousedown', this.trackMouse);
+                },
 
                 trackMouse: function(event) {
                     //event.preventDefault();
@@ -34,7 +54,6 @@ define ([
                 },
                 
                 trackMove: function(event) {
-                    console.log('trackmove');
                     event.preventDefault();
                     event.stopPropagation();
                     event = event || window.event;
@@ -43,8 +62,6 @@ define ([
                         top: event.clientY
                     };
                     
-                    console.log("scroll !");
-                    
                     $(document).scrollLeft(this.initialScroll.left - (this.currentPosition.left - this.initialPosition.left));
                     $(document).scrollTop(this.initialScroll.top - (this.currentPosition.top - this.initialPosition.top));
 
@@ -52,7 +69,6 @@ define ([
                 },
 
                 untrackMouse: function(event) {
-                    console.log("untrack");
                     event.preventDefault();
                     event.stopPropagation();
                     $(window).unbind('mousemove', this.trackMove)
@@ -77,104 +93,56 @@ define ([
 
                 },
 
-                initialize : function(){
-                    
-                    if(!app) app = require('app');
-                    
-                    _.bindAll(this, 'ondrop', 'updatePosition', 'trackMouse', 'untrackMouse', 'trackMove', 'createWidget');
-                    
-                    app.widgets.on('add', this.createWidget);
-                    
-                    // We can drop elements into the main panel
-                    this.$el.droppable();
-
-                    var contextmenuHandler = $.proxy(function(event) {
-                        if($(event.target).attr('id') != 'global_panel') return;
-                        this.$el.unbind('contextmenu');
+                tagContextMenuHandler: function(event) {
+                        if($(event.target).attr('id') != this.$el.attr('id')) return;
                         event.preventDefault();
-                        var that = this;
-                        var yPos = event.pageY;
-                        var xPos = event.pageX;
 
+                        $('#rightclickmenu')
+                            .css('top', event.pageY+'px')
+                            .css('left', event.pageX+'px');
 
-                        $menu = $("<div>")
-                                .addClass('context-menu')
-                                .attr('id', 'contextMenu')
-                                // .css('top', (event.pageY+$(document).scrollTop())+"px")
-                                // .css('left', (event.pageX+$(document).scrollLeft())+"px")
-                                .css('top', yPos+"px")
-                                .css('left', xPos+"px")
-                                .css('position', 'absolute')
-                                .css('padding', '10px')
-                                .css('background-color', 'white')
-                                .css("zIndex", "100")
-                                .css('border-radius', '25px')
-                                .css('min-width', '150px')
-                                .appendTo(this.$el)
-                                .click(function(event) {
-                                    event.preventDefault();
-                                    // $(this).remove();
-                                    that.$el.bind('contextmenu', contextmenuHandler);
-                                });
-                        $('html').click(function(event) {
-                            if($(event.target).attr('id') != 'contextMenu' && $(event.target).attr('id') != 'contextLink') {
-                                $menu.remove();
-                                that.$el.bind('contextmenu', contextmenuHandler);
-                            }
-                        })
-                        $('<a>')
-                            .attr('href', '#')
-                            .attr('id', 'contextLink')
-                            .css('color', 'black')
-                            .html('Make a new tag here')
-                            .click(function(event) {
-                                event.preventDefault();
-                                $menu.html('');
-                                $('<label>')
-                                    .attr('for', 'tagName')
-                                    .html("Enter tag name : ")
-                                    .appendTo($menu);
-                                var input = $('<input />')
-                                    .attr('type', 'text')
-                                    .attr('id', 'tagName')
-                                    .appendTo($menu);
-                                input.focus();
-                                input.keydown(function(e) {
-                                    var keycode = e.keycode || e.which;
-                                    //e.preventDefault();
-                                    console.log(keycode);
-                                    if(keycode == 13) {
-                                        app.tags.create(new Tag({
-                                            x: xPos, 
-                                            y: yPos, 
-                                            name: $(this).val()
-                                        }));
-                                        $menu.remove();
-                                    }
-                                });
-                            })
-                            .appendTo($menu);
+                        this.currentPosition = {
+                            x: event.pageX, 
+                            y: event.pageY
+                        };
+                        console.log("Current position is");
+                        console.log(this.currentPosition);
+                        console.warn("test");
+
+                        $('#rightclickmenu, #createTagLink').show();
                         return false;
-                    }, this)
-                    this.$el.bind('contextmenu', contextmenuHandler);
+                },
 
-                    // $window.bind("contextmenu", function(event) {
-                    //             event.preventDefault();
-                    //              $close = $("<div class='custom-menu'><a href='#' id='close'>Close</a></div>")
-                    //                  .appendTo("body")
-                    //                  .css({
-                    //                      position: "absolute", 
-                    //                      top: event.pageY + "px", 
-                    //                      left: event.pageX + "px",
-                    //                      background: "#e8e8e8", 
-                    //                      border: "1px solid black",
-                    //                      borderRadius: "5px",
-                    //                      zIndex: "100"
-                    //                  })
-                    //                  .click(function() { $window.remove(); $(this).remove();});
-                    //         });
-                    
-                    this.$el.on('mousedown', this.trackMouse);
+                createTag: function(event) {
+                    event.preventDefault();
+
+                    $('#createTagLink').hide();
+                    $('#createTagForm').show();
+                    $('#newTagName').focus();
+                }, 
+
+                checkNewTagForm: function(event) {
+                    var keycode = event.keycode || event.which; // Compatibility
+                    if(keycode == 13) {
+                        event.preventDefault();
+                        app.tags.create(new Tag({
+                            x: this.currentPosition.x,
+                            y: this.currentPosition.y,
+                            name: $('#newTagName').val()
+                        }));
+                        $('#rightclickmenu, #createTagForm').hide();
+                        $('#newTagName').val('');
+                    }
+                },
+
+                /* Closes context menu when somewhere else is clicked */
+                checkHideContextMenu: function(event) {
+                    var id = event.target.id;
+
+                    if(id != 'rightclickmenu' && $(event.target).parent()[0].id != 'rightclickmenu') {
+                        $('#rightclickmenu, #createTagLink, #createTagForm').hide();
+                        $('#newTagName').val('');
+                    }
                 },
                 
                 updatePosition: function(event, ui) {
