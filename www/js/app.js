@@ -6,6 +6,8 @@
 
 
 define([
+    'models/Tag',
+    'collections/TagsCollection',
     'views/WidgetBar',
     'views/GlobalPanel',
     'util/Sync',
@@ -16,7 +18,7 @@ define([
     'socket.io',
     'backbone', 
     'Router'],
-    function(WidgetBar, GlobalPanel, Sync, Widgets, Widget, Map, modules){
+    function(Tag, TagsCollection, WidgetBar, GlobalPanel, Sync, Widgets, Widget, Map, modules){
 
 
     // App is a singleton object
@@ -26,6 +28,8 @@ define([
         This method is called by the loader when the dom is ready.
     */
     App.init = function () {
+        App.tags = new TagsCollection();
+
         // Creates the router
         this.router = new (require('Router'));
         this.router.on('route:scrollTo', function(left, top) {
@@ -34,6 +38,24 @@ define([
                         scrollLeft: left || 0
                     }, 1000);
                 });
+
+        this.router.on('route:scrollToAnchor', function(anchor) {
+            var result  = App.tags.find(function(tag) {
+                return tag.get('name') == anchor;
+            });
+            if(typeof(result) === 'undefined') {
+                window.location.hash = '/';
+            }
+            else {
+                $('html, body').animate({
+                               scrollTop: result.get('y'),
+                               scrollLeft: result.get('x')
+                   }, 1000);
+            }
+            
+
+        });
+
         this.widgets = new Widgets();
         
        
@@ -45,8 +67,6 @@ define([
         
         // Server pushing widgets
         socket.on('create:widget', $.proxy(function(data){
-            console.log("getting a widget");
-            console.log('data name :'+data.wrappedName);
             var widget = new Widget(_.extend(data, {wrappedView: modules[data.wrappedName].view}));
             this.widgets.add(widget);
             sync.makeLive(widget);

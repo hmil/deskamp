@@ -11,12 +11,18 @@ define([
 
         //Defines mapping between routes and methods
         routes: {
-            "": "index",
-            "pos::left-:top": "scrollTo"
+            "/": "default",
+            "pos::left-:top": "scrollTo", 
+            "anchor/:route": "scrollToAnchor"
         },
 
         //Called when the router is instanciated. 
         initialize: function () {
+
+        }, 
+
+        default: function() {
+            console.log("default");
         }
     });
 });

@@ -1,11 +1,12 @@
 
 define ([
     'app',
+    'models/Tag',
     '/js/views/Widget.js',
     '/js/models/Widget.js',
     'modules',
      'backbone'],
-    function(app, Widget, WidgetModel, modules){
+    function(app, Tag, Widget, WidgetModel, modules){
             return Backbone.View.extend({
                 
                 events: {
@@ -92,13 +93,17 @@ define ([
                         this.$el.unbind('contextmenu');
                         event.preventDefault();
                         var that = this;
+                        var yPos = event.pageY;
+                        var xPos = event.pageX;
+
 
                         $menu = $("<div>")
                                 .addClass('context-menu')
+                                .attr('id', 'contextMenu')
                                 // .css('top', (event.pageY+$(document).scrollTop())+"px")
                                 // .css('left', (event.pageX+$(document).scrollLeft())+"px")
-                                .css('top', event.pageY+"px")
-                                .css('left', event.pageX+"px")
+                                .css('top', yPos+"px")
+                                .css('left', xPos+"px")
                                 .css('position', 'absolute')
                                 .css('padding', '10px')
                                 .css('background-color', 'white')
@@ -111,8 +116,15 @@ define ([
                                     // $(this).remove();
                                     that.$el.bind('contextmenu', contextmenuHandler);
                                 });
+                        $('html').click(function(event) {
+                            if($(event.target).attr('id') != 'contextMenu' && $(event.target).attr('id') != 'contextLink') {
+                                $menu.remove();
+                                that.$el.bind('contextmenu', contextmenuHandler);
+                            }
+                        })
                         $('<a>')
                             .attr('href', '#')
+                            .attr('id', 'contextLink')
                             .css('color', 'black')
                             .html('Make a new tag here')
                             .click(function(event) {
@@ -132,7 +144,11 @@ define ([
                                     //e.preventDefault();
                                     console.log(keycode);
                                     if(keycode == 13) {
-                                        alert("Create tag "+$(this).val());
+                                        app.tags.create(new Tag({
+                                            x: xPos, 
+                                            y: yPos, 
+                                            name: $(this).val()
+                                        }));
                                         $menu.remove();
                                     }
                                 });

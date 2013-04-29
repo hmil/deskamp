@@ -16,23 +16,32 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         events: {
             "focusout .sticky_content": "finishEdit", 
             "click .sticky_content[data-name=content]": 'editContent', 
+            "click a": "cancelEvent",
             "focusout .sticky_content_editbox": "finishContentEdit"
         },
 
-        editContent: function() {
+        cancelEvent: function(event) {
+            event.stopPropagation();
+            return true;
+        },
+
+        editContent: function(event) {
+
             var $content = this.$('.sticky_content');
             $content.hide();
             this.$('.sticky_content[data-name=edit]').show();
-            this.$('.sticky_content_editbox').val(this.$('.sticky_content').html());
         },
 
         finishContentEdit: function() {
             this.$('.sticky_content[data-name=edit]').hide();
             var newContent = $('.sticky_content_editbox').val();
-            this.$('.sticky_content').html(newContent).show();
+            this.$('.sticky_content[data-name=content]').html(this.parse(newContent)).show();
             this.model.set('text', newContent);
         },
-        
+        parse: function(c) {
+            return c.replace(/#([a-zA-Z0-9.-]+)/gi, '<a href="#anchor/$1">$1</a>')
+        },
+
         initialize: function(){
             this.model = new Model(this.model);
             
@@ -45,16 +54,15 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             var newContent = this.$('.sticky_content').val();
 
             this.model.set('text', newContent);
-            
-            console.log("edited");
         },
         
         render: function(){
-            
+            var model = this.model.toJSON();
             this.$el.html(
-                this.template(
-                    this.model.toJSON()
-                )
+                this.template({
+                    humanText : this.parse(model.text), 
+                    rawText: model.text
+                })
             );
         }
     });

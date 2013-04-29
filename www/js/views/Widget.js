@@ -112,9 +112,6 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
 			});
 
 			this.$el.resizable();
-			if(wrappedView.resizable === true) {
-				console.log("resizable");
-			}
             
             this.controls = this.$('.widget_controls');
             
