@@ -32,29 +32,6 @@ define([
 
         // Creates the router
         this.router = new (require('Router'));
-        this.router.on('route:scrollTo', function(left, top) {
-                    $('html, body').animate({
-                        scrollTop: top || 0,
-                        scrollLeft: left || 0
-                    }, 1000);
-                });
-
-        this.router.on('route:scrollToAnchor', function(anchor) {
-            var result  = App.tags.find(function(tag) {
-                return tag.get('name') == anchor;
-            });
-            if(typeof(result) === 'undefined') {
-                window.location.hash = '/';
-            }
-            else {
-                $('html, body').animate({
-                               scrollTop: result.get('y'),
-                               scrollLeft: result.get('x')
-                   }, 1000);
-            }
-            
-
-        });
 
         this.widgets = new Widgets();
         
@@ -92,6 +69,13 @@ define([
             panel : this.globalPanel
         });
         
+        this.scrollTo = function(xPos, yPos, delay) {
+            delay = delay || 1000;
+            $('body, html').animate({
+                scrollTop: yPos,
+                scrollLeft: xPos
+            }, delay);
+        }
         console.log("app initialized");
     };
     
