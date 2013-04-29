@@ -14,8 +14,8 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         
         /* Good old backbone code */
         events: {
-            "focusout .sticky_content": "finishEdit", 
-            "click .sticky_content[data-name=content]": 'editContent', 
+            "focusout .sticky_content_editbox": "finishEdit", 
+            "click .sticky_content": 'editContent', 
             "click a": "cancelEvent",
             "focusout .sticky_content_editbox": "finishContentEdit"
         },
@@ -26,20 +26,25 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         },
 
         editContent: function(event) {
-
             var $content = this.$('.sticky_content');
             $content.hide();
-            this.$('.sticky_content[data-name=edit]').show();
+            this.$('.sticky_content_edit').show();
+            
+            this.$('.sticky_content_editbox').focus();
         },
 
         finishContentEdit: function() {
-            this.$('.sticky_content[data-name=edit]').hide();
-            var newContent = $('.sticky_content_editbox').val();
-            this.$('.sticky_content[data-name=content]').html(this.parse(newContent)).show();
+            // console.log("Value : "+this.$('.sticky_content_editbox').val());
+            this.$('.sticky_content_edit').hide();
+            var newContent = this.$('.sticky_content_editbox').val();
+            this.$('.sticky_content').html(this.parse(newContent)).show();
             this.model.set('text', newContent);
         },
         parse: function(c) {
-            return c.replace(/#([a-zA-Z0-9.-]+)/gi, '<a href="#anchor/$1">$1</a>')
+            return c
+                .replace(/#([a-zA-Z0-9.-]+)/gi, '<a href="#anchor/$1">$1</a>')
+                .replace(/\n/gi, '<br />');
+
         },
 
         initialize: function(){
