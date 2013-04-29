@@ -92,6 +92,40 @@ background-color: white;
     -moz-border-radius-bottomright:15px;
 }
 
+.scroller {
+    position: fixed;
+    background-color: black;
+    opacity: 0.1;
+}
+
+.horizontal-scroller {
+    width: 40px;
+    height: 100%;
+    top: 0px;
+}
+
+.vertical-scroller {
+    width: 100%;
+    height: 40px;
+    left: 0px;
+}
+
+#left-scroller {
+    left: 0px;
+}
+
+#right-scroller {
+    right: 0px;
+}
+
+#top-scroller {
+    top: 0px;
+}
+
+#bottom-scroller {
+    bottom: 0px;
+}
+
 #map {
     position: fixed;
     height: 130px;

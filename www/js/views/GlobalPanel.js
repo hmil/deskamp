@@ -13,7 +13,12 @@ define ([
                     'drop': 'ondrop', 
                     'click #createTagLink': 'createTag', 
                     'keydown #newTagName': 'checkNewTagForm', 
-                    'click': 'checkHideContextMenu'
+                    'click': 'checkHideContextMenu',
+                    'mouseover #left-scroller': 'scrollLeft', 
+                    'mouseover #right-scroller': 'scrollRight', 
+                    'mouseover #top-scroller': 'scrollTop', 
+                    'mouseover #bottom-scroller': 'scrollBottom',
+                    'mouseout .scroller': 'stopScroll'
                 },
                 lastPosition: {}, 
                 currentPosition: {},
@@ -23,7 +28,8 @@ define ([
                     if(!app) app = require('app');
                     
                     _.bindAll(this, 'ondrop', 'updatePosition', 'trackMouse', 'untrackMouse', 
-                        'trackMove', 'createWidget', 'createTag', 'checkNewTagForm', 'tagContextMenuHandler');
+                        'trackMove', 'createWidget', 'createTag', 'checkNewTagForm', 'tagContextMenuHandler', 
+                        'scrollLeft', 'scrollRight', 'scrollTop', 'scrollBottom', 'stopScroll');
                     
                     app.widgets.on('add', this.createWidget);
                     
@@ -35,8 +41,37 @@ define ([
                     this.$el.on('mousedown', this.trackMouse);
                 },
 
+                scrollLeft: function(event) {
+                    this.scrollingInterval = setInterval(function() {
+                        $(document).scrollLeft($(document).scrollLeft()-20);
+                    }, 10);
+                },
+
+                scrollRight: function(event) {
+                    this.scrollingInterval = setInterval(function() {
+                        $(document).scrollLeft($(document).scrollLeft()+20);
+                    }, 10);
+                },
+
+                scrollTop: function(event) {
+                    this.scrollingInterval = setInterval(function() {
+                        $(document).scrollTop($(document).scrollTop()-20);
+                    }, 10);
+                }, 
+
+                scrollBottom: function(event) {
+                    this.scrollingInterval = setInterval(function() {
+                        $(document).scrollTop($(document).scrollTop()+20);
+                    }, 10);
+                },
+
+                stopScroll: function(event) {
+                    if(typeof(this.scrollingInterval) != undefined) {
+                        clearInterval(this.scrollingInterval);
+                    }
+                },
+
                 trackMouse: function(event) {
-                    //event.preventDefault();
                     event.stopPropagation();
 
                     this.$el.css('cursor', 'move');
