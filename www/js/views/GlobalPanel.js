@@ -18,7 +18,8 @@ define ([
                     'mouseover #right-scroller': 'scrollRight', 
                     'mouseover #top-scroller': 'scrollTop', 
                     'mouseover #bottom-scroller': 'scrollBottom',
-                    'mouseout .scroller': 'stopScroll'
+                    'mouseout .scroller': 'stopScroll', 
+                    'mapscroll': 'onScroll'
                 },
                 
                 /**
@@ -34,13 +35,15 @@ define ([
                 lastPosition: {}, 
                 currentPosition: {},
 
+                lastScrollCheck: -1,
+
                 initialize : function(){
                     
                     if(!app) app = require('app');
                     
                     _.bindAll(this, 'ondrop', 'updatePosition', 'trackMouse', 'untrackMouse', 
                         'trackMove', 'createWidget', 'createTag', 'checkNewTagForm', 'tagContextMenuHandler', 
-                        'scrollLeft', 'scrollRight', 'scrollTop', 'scrollBottom', 'stopScroll');
+                        'scrollLeft', 'scrollRight', 'scrollTop', 'scrollBottom', 'stopScroll', 'onScroll');
                     
                     app.widgets.on('add', this.createWidget);
                     
@@ -53,6 +56,26 @@ define ([
                     
                     // Configures panel's width and height according to settings
                     this.$el.width(this.settings.width).height(this.settings.height);
+
+                    $(window).scroll(this.onScroll);
+                },
+
+                onScroll: function(event) {
+                    /* Only checks every 500ms */
+                    var currentTime = new Date().getTime();
+                    if ( !(this.lastScrollCheck === -1 || new Date().getTime() - this.lastScrollCheck >= 500)) return;
+
+                    var scrollTop = $(document).scrollTop()
+                      , scrollLeft = $(document).scrollLeft()
+                      , $el       = this.$el;
+                    var inViewportTags = app.tags.find(function(tag) {
+                        return (tag.get('x') >= scrollTop && tag.get('x') <= scrollLeft + $el.width())
+                            && (tag.get('y') >= scrollTop && tag.get('y') <= scrollTop + $el.height())
+                    });
+                    if(typeof(inViewportTags) !== 'undefined') {
+                        app.router.navigate("!"+inViewportTags.get('name'), false);
+                    }
+                    this.lastScrollCheck = currentTime;
                 },
 
                 scrollLeft: function(event) {

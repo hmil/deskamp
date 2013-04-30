@@ -87,7 +87,7 @@ background-color: white;
 .scroller {
     position: fixed;
     background-color: black;
-    opacity: 0.1;
+    opacity: 0.05;
 }
 
 .horizontal-scroller {

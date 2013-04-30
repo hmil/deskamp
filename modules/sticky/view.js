@@ -42,7 +42,7 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         },
         parse: function(c) {
             return c
-                .replace(/#([a-zA-Z0-9.-]+)/gi, '<a href="#anchor/$1">$1</a>')
+                .replace(/#([a-zA-Z0-9.-]+)/gi, '<a href="#!$1">$1</a>')
                 .replace(/\n/gi, '<br />');
 
         },
