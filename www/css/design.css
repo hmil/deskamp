@@ -41,14 +41,6 @@ background-color: white;
     overflow: hidden;
 } */
 
-#global_panel{
-   /* margin:-1000px -1000px;*/
-    width: 20000px;
-    height: 20000px;
-
-    /*background-color: black;*/
-}
-
 .widget_controls {
     margin-left: 25px;
     position: absolute;
@@ -140,15 +132,14 @@ background-color: white;
     border-color: black;
 }
 
-#target {
-    position: fixed;
-    height: 20%;
-    width: 20%;
-    top:40%;
-    right: 40%;
-    border-width:1px;
-    border-style:solid;
-    border-color:blue;
+#map_target {
+    position: absolute;
+    border: 1px blue solid;
+}
+
+#map_canvas {
+    width: 100%;
+    height: 100%;
 }
 
 #rightclickmenu {

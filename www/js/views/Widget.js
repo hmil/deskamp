@@ -61,7 +61,6 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
         },
 
 		onDelete: function(evt) {
-            console.log("deleting !!!");
 			this.$el.remove();
 			if(this.wrapped.remove) {
 				this.wrapped.remove();

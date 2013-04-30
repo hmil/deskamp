@@ -30,8 +30,7 @@ define([
     App.init = function () {
         App.tags = new TagsCollection();
 
-        // Creates the router
-        this.router = new (require('Router'));
+        
 
         this.widgets = new Widgets();
         
@@ -52,9 +51,7 @@ define([
             
         Backbone.sync = sync.sync;
         
-        if(!Backbone.history.start()){
-            window.location.hash = '/';
-        }
+        
         
         var arguments = {};
         
@@ -66,15 +63,18 @@ define([
         });
         this.map = new Map({
             el: '#map',
-            panel : this.globalPanel
+            panel   : this.globalPanel,
+            widgets : this.widgets
         });
         
-        this.scrollTo = function(xPos, yPos, delay) {
-            $('body, html').animate({
-                scrollTop: yPos,
-                scrollLeft: xPos
-            }, delay || 1000);
+        // Creates the router
+        this.router = new (require('Router'))({
+            panel: this.globalPanel
+        });
+        if(!Backbone.history.start()){
+            window.location.hash = '/';
         }
+        
         console.log("app initialized");
     };
     

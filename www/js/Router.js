@@ -2,27 +2,26 @@
  * This is the only app router. It handles navigation and shows the proper views.
  */
 define([
-    'app',
     'jquery',
     'backbone'
-], function(App, $){
+], function($){
 
     return Backbone.Router.extend({
 
         //Defines mapping between routes and methods
         routes: {
-            "/": "default",
+            "/": "index",
             ":left-:top": "scrollTo", 
             "anchor/:route": "scrollToAnchor"
         },
 
         //Called when the router is instanciated. 
-        initialize: function () {
-            if(!App) App = require('app');
+        initialize: function (args) {
+            this.panel = args.panel;
         }, 
 
-        default: function() {
-            console.log("default");
+        index: function() {
+            console.log("index");
         }, 
 
         scrollToAnchor: function(anchor) {
