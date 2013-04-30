@@ -61,6 +61,8 @@ define([
         this.globalPanel = new GlobalPanel({
             el: '#global_panel'
         });
+        this.globalPanel.render();
+        
         this.map = new Map({
             el: '#map',
             panel   : this.globalPanel,
