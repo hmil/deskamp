@@ -3,8 +3,9 @@
  */
 define([
     'jquery',
-    'backbone'
-], function($){
+    'backbone', 
+    'app'
+], function($, App){
 
     return Backbone.Router.extend({
 
@@ -12,27 +13,27 @@ define([
         routes: {
             "/": "index",
             ":left-:top": "scrollTo", 
-            "anchor/:route": "scrollToAnchor"
+            /* Attention : si besoin de changer la forme de la route ci-dessous, il faut la changer dans la sticky view et dans le onScroll de GlobalPanel */
+            "!:anchor": "scrollToAnchor" 
         },
 
         //Called when the router is instanciated. 
         initialize: function (args) {
             this.panel = args.panel;
+            if(!App) App = require('app');
         }, 
 
-        index: function() {
-            console.log("index");
-        }, 
+        index: function() {}, 
 
         scrollToAnchor: function(anchor) {
             var result  = App.tags.find(function(tag) {
                 return tag.get('name') == anchor;
             });
             if(typeof(result) === 'undefined') {
-                window.location.hash = '/';
+                this.navigate('/');
             }
             else {
-                App.scrollTo(result.get('x'), result.get('y'));
+                App.globalPanel.scrollTo(result.get('x'), result.get('y'), 1000);
             }
         }, 
 

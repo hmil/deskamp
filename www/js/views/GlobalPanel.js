@@ -4,9 +4,10 @@ define ([
     'models/Tag',
     '/js/views/Widget.js',
     '/js/models/Widget.js',
+    '/js/views/Scrolling.js',
     'modules',
      'backbone'],
-    function(app, Tag, Widget, WidgetModel, modules){
+    function(app, Tag, Widget, WidgetModel, Scrolling, modules){
             return Backbone.View.extend({
                 
                 events: {
@@ -14,11 +15,11 @@ define ([
                     'click #createTagLink': 'createTag', 
                     'keydown #newTagName': 'checkNewTagForm', 
                     'click': 'checkHideContextMenu',
-                    'mouseover #left-scroller': 'scrollLeft', 
-                    'mouseover #right-scroller': 'scrollRight', 
-                    'mouseover #top-scroller': 'scrollTop', 
-                    'mouseover #bottom-scroller': 'scrollBottom',
-                    'mouseout .scroller': 'stopScroll'
+                    // 'mouseover #left-scroller': 'scrollLeft', 
+                    // 'mouseover #right-scroller': 'scrollRight', 
+                    // 'mouseover #top-scroller': 'scrollTop', 
+                    // 'mouseover #bottom-scroller': 'scrollBottom',
+                    // 'mouseout .scroller': 'stopScroll'
                 },
                 
                 /**
@@ -34,13 +35,16 @@ define ([
                 lastPosition: {}, 
                 currentPosition: {},
 
+                lastScrollCheck: -1,
+
+                horizontalScrollSpeed: 0, 
+                verticalScrollSpeed: 0,
+
                 initialize : function(){
                     
                     if(!app) app = require('app');
                     
-                    _.bindAll(this, 'ondrop', 'updatePosition', 'trackMouse', 'untrackMouse', 
-                        'trackMove', 'createWidget', 'createTag', 'checkNewTagForm', 'tagContextMenuHandler', 
-                        'scrollLeft', 'scrollRight', 'scrollTop', 'scrollBottom', 'stopScroll');
+                    _.bindAll(this, 'ondrop', 'updatePosition', 'createWidget', 'createTag', 'checkNewTagForm', 'tagContextMenuHandler');
                     
                     app.widgets.on('add', this.createWidget);
                     
@@ -49,88 +53,124 @@ define ([
 
                     this.$el.bind('contextmenu', this.tagContextMenuHandler);
                     
-                    this.$el.on('mousedown', this.trackMouse);
+                    // this.$el.on('mousedown', this.trackMouse);
                     
                     // Configures panel's width and height according to settings
                     this.$el.width(this.settings.width).height(this.settings.height);
+
+                    this.scrolling = new Scrolling({
+                        el: this.$el
+                    });
+
+                    // $(window).scroll(this.onScroll);
+                    // $(window).resize(this.updateScrollSpeed);
+                    // this.updateScrollSpeed();
                 },
 
-                scrollLeft: function(event) {
-                    this.scrollingInterval = setInterval(function() {
-                        $(document).scrollLeft($(document).scrollLeft()-20);
-                    }, 10);
+                scrollTo: function(x, y, delay) {
+                    this.scrolling.scrollTo(x, y, delay);
                 },
 
-                scrollRight: function(event) {
-                    this.scrollingInterval = setInterval(function() {
-                        $(document).scrollLeft($(document).scrollLeft()+20);
-                    }, 10);
-                },
+                // updateScrollSpeed: function() {
+                //     this.horizontalScrollSpeed = $(window).width()/100;
+                //     this.verticalScrollSpeed = $(window).height()/100;
+                // }, 
 
-                scrollTop: function(event) {
-                    this.scrollingInterval = setInterval(function() {
-                        $(document).scrollTop($(document).scrollTop()-20);
-                    }, 10);
-                }, 
+                // onScroll: function(event) {
+                //     /* Only checks every 500ms */
+                //     var currentTime = new Date().getTime();
+                //     if ( !(this.lastScrollCheck === -1 || new Date().getTime() - this.lastScrollCheck >= 500)) return;
 
-                scrollBottom: function(event) {
-                    this.scrollingInterval = setInterval(function() {
-                        $(document).scrollTop($(document).scrollTop()+20);
-                    }, 10);
-                },
+                //     var scrollTop = $(document).scrollTop()
+                //       , scrollLeft = $(document).scrollLeft()
+                //       , $el       = this.$el;
+                //     var inViewportTags = app.tags.find(function(tag) {
+                //         return (tag.get('x') >= scrollTop && tag.get('x') <= scrollLeft + $el.width())
+                //             && (tag.get('y') >= scrollTop && tag.get('y') <= scrollTop + $el.height())
+                //     });
+                //     if(typeof(inViewportTags) !== 'undefined') {
+                //         app.router.navigate("!"+inViewportTags.get('name'), false);
+                //     }
+                //     this.lastScrollCheck = currentTime;
+                // },
 
-                stopScroll: function(event) {
-                    if(typeof(this.scrollingInterval) != undefined) {
-                        clearInterval(this.scrollingInterval);
-                    }
-                },
+                // scrollLeft: function(event) {
+                //     this.scrollingInterval = setInterval($.proxy(function() {
+                //         $(document).scrollLeft($(document).scrollLeft()-this.horizontalScrollSpeed);
+                //     }, this), 10);
+                // },
+
+                // scrollRight: function(event) {
+                //     console.log(this.horizontalScrollSpeed);
+                //     this.scrollingInterval = setInterval($.proxy(function() {
+                //         $(document).scrollLeft($(document).scrollLeft()+this.horizontalScrollSpeed);
+                //     }, this), 10);
+                // },
+
+                // scrollTop: function(event) {
+                //     this.scrollingInterval = setInterval($.proxy(function() {
+                //         $(document).scrollTop($(document).scrollTop()-this.verticalScrollSpeed);
+                //     }, this), 10);
+                // }, 
+
+                // scrollBottom: function(event) {
+                //     this.scrollingInterval = setInterval($.proxy(function() {
+                //         $(document).scrollTop($(document).scrollTop()+this.verticalScrollSpeed);
+                //     }, this), 10);
+                // },
+
+                // stopScroll: function(event) {
+                //     if(typeof(this.scrollingInterval) != undefined) {
+                //         clearInterval(this.scrollingInterval);
+                //     }
+                // },
                 
-                scrollTo: function(xPos, yPos, delay) {
-                    $('body, html').animate({
-                        scrollTop: yPos,
-                        scrollLeft: xPos
-                    }, delay || 0);
-                },
+                // scrollTo: function(xPos, yPos, delay) {
+                //     $('body, html').animate({
+                //         scrollTop: yPos,
+                //         scrollLeft: xPos
+                //     }, delay || 0);
+                // },
 
-                trackMouse: function(event) {
-                    event.stopPropagation();
+                // trackMouse: function(event) {
+                //     event.stopPropagation();
 
-                    this.$el.css('cursor', 'move');
-                    this.initialPosition = {
-                        left: event.clientX, 
-                        top: event.clientY
-                    };
+                //     this.$el.css('cursor', 'move');
+                //     this.initialPosition = {
+                //         left: event.clientX, 
+                //         top: event.clientY
+                //     };
                     
-                    this.initialScroll = {
-                        left: $(document).scrollLeft(),
-                        top: $(document).scrollTop()
-                    };
+                //     this.initialScroll = {
+                //         left: $(document).scrollLeft(),
+                //         top: $(document).scrollTop()
+                //     };
 
-                    $(window).mousemove(this.trackMove).mouseup(this.untrackMouse);
-                },
+                //     $(window).mousemove(this.trackMove).mouseup(this.untrackMouse);
+                // },
                 
-                trackMove: function(event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    event = event || window.event;
-                    this.currentPosition = {
-                        left: event.clientX, 
-                        top: event.clientY
-                    };
+                // trackMove: function(event) {
+                //     event.preventDefault();
+                //     event.stopPropagation();
+                //     event = event || window.event;
+                //     this.currentPosition = {
+                //         left: event.clientX, 
+                //         top: event.clientY
+                //     };
                     
-                    $(document).scrollLeft(this.initialScroll.left - (this.currentPosition.left - this.initialPosition.left));
-                    $(document).scrollTop(this.initialScroll.top - (this.currentPosition.top - this.initialPosition.top));
+                //     $(document).scrollLeft(this.initialScroll.left - (this.currentPosition.left - this.initialPosition.left));
+                //     $(document).scrollTop(this.initialScroll.top - (this.currentPosition.top - this.initialPosition.top));
 
-                    if (this.map) this.map.draggable.newpos();
-                },
+                //     if (this.map) this.map.draggable.newpos();
+                // },
 
-                untrackMouse: function(event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    $(window).unbind('mousemove', this.trackMove)
-                            .unbind('mouseup', this.untrackMouse);
-                    this.$el.css('cursor', 'default');
-                },
+                // untrackMouse: function(event) {
+                //     event.preventDefault();
+                //     event.stopPropagation();
+                //     $(window).unbind('mousemove', this.trackMove)
+                //             .unbind('mouseup', this.untrackMouse);
+                //     this.$el.css('cursor', 'default');
+                // },
 
                 getHeight : function(event){
                     return this.$el.height();
@@ -225,6 +265,10 @@ define ([
                     });
 
                     this.$el.append(wid.$el);
+                }, 
+
+                render: function() {
+                    this.scrolling.render();
                 }
 
             })
