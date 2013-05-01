@@ -3,13 +3,15 @@ define(['backbone'], function() {
 		url: "widget",
 		
 		defaults: {
-			coords: "0 0", 
-            size: "100 100",
+			coords: {
+                x: 0,
+                y: 0
+            }, 
+            size: {
+                width: 300, 
+                height: 200
+            },
 			contents: '{}'
-        }, 
-
-		initialize: function() {
-
-		}
+        }
 	})
 });

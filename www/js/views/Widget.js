@@ -5,7 +5,8 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
 			"click .widget_delete_button": "onDelete",
             "mouseenter .widget_container": "onMouseenter",
             "mouseleave .widget_container": "onMouseleave",
-            "mousedown": "preventProp"
+            "mousedown": "preventProp",
+            "resizestop": "onResize"
 		},
         
         preventProp: function(evt){
@@ -13,21 +14,22 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
         },
 
         handleWidgetsFocus: function() {
-            if(!app) app = require('app');
+            
         	var maxzIndex = app.maxzIndex || 1;
         	this.$el.css('z-index', maxzIndex+1);
         	app.maxzIndex = maxzIndex + 1;
         },
        
 		initialize: function(params) {
-           
+            if(!app) app = require('app');
+            
 			if(!this.model) {
 				this.model = new Widget();
 				app.widgets.add(this.model);
                 this.model.save();
 			}
             
-			_.bindAll(this, 'render', 'onDelete', 'updatePosition', 'onMouseenter', 'onMouseleave', 'onDragStart', 'updateCoords', 'onWrappedModelChange');
+			_.bindAll(this, 'render', 'onDelete', 'updatePosition', 'onMouseenter', 'onMouseleave', 'onDragStart', 'updateCoords', 'onWrappedModelChange', 'onResize');
             
             this.model.on('change:coords', this.updateCoords);
             this.model.on('change:contents', this.render);
@@ -53,10 +55,10 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
 		}, 
         
         updateCoords: function(){
-            var c = this.model.get('coords').split(' ');
+            var c = this.model.get('coords');
             this.$el.css({
-                left: c[0],
-                top: c[1]
+                left: c.x,
+                top: c.y
             });
         },
 
@@ -69,10 +71,18 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
             if(evt)
                 this.model.destroy();
 		},
+        
+        onResize: function(evt, ui){
+            this.model.set('size', ui.size);
+            console.log(ui.size);
+        },
 
 		updatePosition: function(event, ui) {
             this.isDragged = false;
-			this.model.set('coords', ui.position.left+' '+ui.position.top);
+			this.model.set('coords', {
+                x: ui.position.left,
+                y: ui.position.top
+            });
 		},
         
         onWrappedModelChange: function(){
@@ -93,15 +103,20 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
             
 			var width = (wrappedView.defaultSize) ? wrappedView.defaultSize.width : 200;
 			var height = (wrappedView.defaultSize) ? wrappedView.defaultSize.height : 300;
-
+            
+            this.model.set('size', {
+                width: width,
+                height: height
+            });
+            
 			this.$el.width(width);
 			this.$el.height(height);
 			this.$el.css('position', 'absolute');
             
-            var coords = this.model.get('coords').split(' ');
+            var c = this.model.get('coords');
 			this.$el.offset({
-				left: coords[0], 
-				top: coords[1]
+				left: c.x, 
+				top: c.y
 			});
 
 			this.$el.draggable({

@@ -37,7 +37,7 @@
                 
                 // Binding "this" context to the methods that need it
                 _.bindAll(this, 
-                    "render", "onMousedown", "onMouseup", "onMousemove", "setTargetPosition", "moveViewportToCursor", "drawCanvas", "drawTarget"
+                    "render", "onMousedown", "onMouseup", "onMousemove", "setTargetPosition", "moveViewportToCursor", "drawCanvas", "drawTarget", "onWidgetAdded"
                 );
 
                 // Global panel
@@ -45,8 +45,7 @@
                 // Widgets collection (used to render widgets on the map)
                 this.widgets = hash.widgets;
                 
-                this.widgets.on('add', this.drawCanvas)
-                            .on('remove', this.drawCanvas);
+                this.widgets.on('add', this.onWidgetAdded);
                 
                 $(window)
                     .resize(this.drawTarget)
@@ -81,25 +80,33 @@
                 this.drawCanvas();
             },
             
+            
+            /**
+             *  Draws the background canvas representing the set of widgets on the map.
+             *  (does not affect either the target or the DOM)
+             */
             drawCanvas: function(){
+                
+                console.log("drawing canvas");
                 
                 this.ctx.fillStyle = "#fff";
                 this.ctx.fillRect(0, 0, this.canvas.width(), this.canvas.height());
                 
+                console.log(this.canvas.width()+' '+this.canvas.height());
                 var coll = app.widgets.models;
                 
                 for(var i in coll){
                 
-                    var widPos = coll[i].get('coords').split(' ');
+                    var widPos = coll[i].get('coords');
                     var coords = this.globalCoordsToLocal({
-                        x: widPos[0],
-                        y: widPos[1]
+                        x: widPos.x,
+                        y: widPos.y
                     });
                     
-                    var widSize = coll[i].get('size').split(' ');
+                    var widSize = coll[i].get('size');
                     var size = this.globalCoordsToLocal({
-                        x: widSize[0],
-                        y: widSize[1]
+                        x: widSize.width,
+                        y: widSize.height
                     });
 
                     this.ctx.fillStyle = "#000";
@@ -149,6 +156,14 @@
             
             onMousemove: function(evt){
                 this.moveViewportToCursor({x: evt.clientX, y: evt.clientY});
+            },
+            
+            onWidgetAdded: function(model){
+                this.drawCanvas();
+                
+                model
+                    .on('change:size change:coords', this.drawCanvas)
+                    .once('remove', this.drawCanvas);
             },
             
             
