@@ -32,6 +32,10 @@ background-color: white;
 
 }
 
+.foreground {
+    z-index: 1000;
+}
+
 .widget_icon {
     float: right;
     margin-right: 6px;
@@ -63,7 +67,6 @@ background-color: white;
     top: -20px;
     left: 0;
     margin-top: 40;
-    z-index: 1000;
 
     background-color: white;
 
