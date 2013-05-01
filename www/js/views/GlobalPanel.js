@@ -252,7 +252,10 @@ define ([
                     if(!name) return; // We dont want to drop a new widget
                     
                     app.widgets.create({
-                        coords: event.pageX+" "+event.pageY,
+                        coords: {
+                            x: event.pageX,
+                            y: event.pageY
+                        },
                         wrappedView: modules[name].view,
                         wrappedName: name
                     });

@@ -55,10 +55,10 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
 		}, 
         
         updateCoords: function(){
-            var c = this.model.get('coords').split(' ');
+            var c = this.model.get('coords');
             this.$el.css({
-                left: c[0],
-                top: c[1]
+                left: c.x,
+                top: c.y
             });
         },
 
@@ -79,7 +79,10 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
 
 		updatePosition: function(event, ui) {
             this.isDragged = false;
-			this.model.set('coords', ui.position.left+' '+ui.position.top);
+			this.model.set('coords', {
+                x: ui.position.left,
+                y: ui.position.top
+            });
 		},
         
         onWrappedModelChange: function(){
@@ -110,10 +113,10 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
 			this.$el.height(height);
 			this.$el.css('position', 'absolute');
             
-            var coords = this.model.get('coords').split(' ');
+            var c = this.model.get('coords');
 			this.$el.offset({
-				left: coords[0], 
-				top: coords[1]
+				left: c.x, 
+				top: c.y
 			});
 
 			this.$el.draggable({

@@ -97,10 +97,10 @@
                 
                 for(var i in coll){
                 
-                    var widPos = coll[i].get('coords').split(' ');
+                    var widPos = coll[i].get('coords');
                     var coords = this.globalCoordsToLocal({
-                        x: widPos[0],
-                        y: widPos[1]
+                        x: widPos.x,
+                        y: widPos.y
                     });
                     
                     var widSize = coll[i].get('size');
