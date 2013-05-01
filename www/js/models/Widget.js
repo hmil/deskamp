@@ -4,12 +4,11 @@ define(['backbone'], function() {
 		
 		defaults: {
 			coords: "0 0", 
-            size: "100 100",
+            size: {
+                width: 300, 
+                height: 200
+            },
 			contents: '{}'
-        }, 
-
-		initialize: function() {
-
-		}
+        }
 	})
 });

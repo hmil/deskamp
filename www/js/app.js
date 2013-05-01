@@ -43,8 +43,7 @@ define([
         
         // Server pushing widgets
         socket.on('create:widget', $.proxy(function(data){
-            var widget = new Widget(_.extend(data, {wrappedView: modules[data.wrappedName].view}));
-            this.widgets.add(widget);
+            var widget = this.widgets.create(_.extend(data, {wrappedView: modules[data.wrappedName].view}));
             sync.makeLive(widget);
             widget.trigger('sync'); // The server pushed this so it seems ok to fire this event
         }, this));

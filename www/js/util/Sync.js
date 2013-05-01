@@ -22,15 +22,12 @@ define(function(){
                     case 'update':
                     
                         socket.emit('update:'+model.url, {id: model.id, model: model.toJSON()});
-                        
-                        console.log('updating : '+model.id);
-                        console.log(model);
+
                         break;
                     case 'delete':
                         
                         socket.emit('delete:'+model.url, model.id);
                         
-                        Sync.unmakeLive(model);
                         console.log('deleting');
                         break;
                     case 'read':
@@ -52,7 +49,7 @@ define(function(){
                         };
                     })(i));
                 }
-                model.on('destroy', this.onModelDestroy);
+                model.once('destroy', $.proxy(this.onModelDestroy, this));
                 socket.on('update:'+model.url+'_'+model.id, function(data){
                     console.log("server updated client data : "+model.id);
                     for(var i in data){
@@ -66,12 +63,13 @@ define(function(){
             },
             
             unmakeLive: function(model){
-                model.off('destroy', this.onModelDestroy);
+                
                 socket.removeAllListeners('update:'+model.url+'_'+model.id)
                     .removeAllListeners('delete:'+model.url+'_'+model.id);
             },
             
-            onModelDestroy: function(options){ 
+            onModelDestroy: function(model, coll, options){
+                this.unmakeLive(model);
                 if(!options.remote)
                     Backbone.sync('delete', model); 
             }
