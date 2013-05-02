@@ -11,7 +11,8 @@ requirejs.config({
         'backbone': '/js/lib/backbone',
         'templates': '/templates',
         'Session': '/js/util/Session',
-        'jqueryUI': '/js/lib/jquery-ui-1.10.2.custom.min'
+        'jqueryUI': '/js/lib/jquery-ui-1.10.2.custom.min', 
+        'hoverIntent': '/js/lib/hoverIntent'
     }
 });
 

@@ -10,7 +10,7 @@
         }, 
 
         initialize: function() {
-        	_.bindAll(this, 'addItem', 'checkItem', 'uncheckItem');
+        	_.bindAll(this, 'addItem', 'checkItem', 'uncheckItem', 'removeItem');
         },
 
         addItem: function(itemName) {
@@ -21,7 +21,7 @@
         checkItem: function(itemName) {
         	this.setItemState(itemName, true);
         },
-        
+
         uncheckItem: function(itemName) {
         	this.setItemState(itemName, false);
         },

@@ -42,3 +42,7 @@ ul li {
 	text-align: center;
 	font-size:20;
 }
+
+.todolist_remove_item {
+	cursor: hand;
+}

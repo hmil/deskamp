@@ -1,0 +1,11 @@
+{
+    "name"      : "codesnippet",
+    "version"   : "0.0.1",
+    "author"    : "Christophe",
+    
+    "view"      : "view.js",
+    "style"     : "style.css",
+    
+    "icon"      : "icon.png",
+    "title"     : "Code snippet"
+}
