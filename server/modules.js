@@ -91,17 +91,25 @@ module.exports = function(){
             });
             
             modules.push({
-                view: '/modules/'+name+'/'+parsedPackage.view,
-                model: '/modules/'+name+'/'+parsedPackage.model,
-                name: parsedPackage.name,
-                icon: '/modules/'+name+'/'+parsedPackage.icon,
-                title: parsedPackage.title
+                view: '/modules/'+name+'/'+requiredProperty(parsedPackage, 'view', name),
+                model: '/modules/'+name+'/'+requiredProperty(parsedPackage, 'model', name),
+                name: requiredProperty(parsedPackage, 'name', name),
+                icon: '/modules/'+name+'/'+requiredProperty(parsedPackage, 'icon', name),
+                title: requiredProperty(parsedPackage, 'title', name)
             });
             
             onViewFetched();
         });
         
        
+    }
+    
+    // Check if the required property is defined and throws an error if not
+    function requiredProperty(src, prop, name){
+        var ret = src[prop];
+        if(typeof ret === 'undefined')
+            throw prop+" is not defined in package "+name;
+        return ret;
     }
 
     // Fetch module list
