@@ -41,6 +41,15 @@ define(['app',
 		*/
 		edgeScrollDelay: 350,
 
+		/**
+		*	Indicates if the user is currently scrolling.
+		*	Used for arrow keys, to avoid setting timeouts too often, 
+		*	for the 'keydown' event is triggered many times when a key
+		*	stays pressed
+		*/
+		isScrolling: false,
+		scrollingKey: -1,
+
 		events: {
 			'mouseout .scroller': 'stopScroll',
 		},
@@ -78,8 +87,8 @@ define(['app',
 		},
 
 		updateScrollSpeed: function() {
-		    this.horizontalScrollSpeed = $(window).width()/100;
-		    this.verticalScrollSpeed = $(window).height()/100;
+		    this.horizontalScrollSpeed = $(window).width()/70;
+		    this.verticalScrollSpeed = $(window).height()/70;
 		},
 
 		onScroll: function(event) {
@@ -141,8 +150,8 @@ define(['app',
 
 		arrowsScroll: function(event) {
 			var keycode = event.keycode || event.which;
-			if(keycode != 40 && keycode != 38 && keycode != 37 && keycode != 39) return;
-			console.log(keycode);
+			if( (keycode != 40 && keycode != 38 && keycode != 37 && keycode != 39) || (this.isScrolling === true && this.scrollingKey == keycode)) return;
+			//console.log(keycode);
 			var xIncrement = 0
 			  , yIncrement = 0;
 
@@ -160,6 +169,7 @@ define(['app',
 			 		xIncrement = this.horizontalScrollSpeed;
 			 		break;
 			 }
+			 this.scrollingKey = keycode;
 			 this.launchScroll(xIncrement, yIncrement);
 
 		}, 
@@ -175,6 +185,7 @@ define(['app',
 				if(xIncrement !== 0) $(document).scrollLeft($(document).scrollLeft() + xIncrement);
 				if(yIncrement !== 0) $(document).scrollTop($(document).scrollTop() + yIncrement);
 			}, this), 10);
+			this.isScrolling = true;
 		},
 
 		stopArrowsScroll: function(event) {
@@ -188,6 +199,8 @@ define(['app',
 		    if(typeof(this.scrollingInterval) != undefined) {
 		        clearInterval(this.scrollingInterval);
 		    }
+		    this.isScrolling = false;
+		    this.scrollingKey = -1;
 		},
 
 		/**
