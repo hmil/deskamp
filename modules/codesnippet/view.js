@@ -42,6 +42,7 @@ define(["./model.js", "text!./template.jst", './textareaUtils.js', 'backbone'],
             this.$('.code-edit').hide();
             this.$('.code-content').text(newCode);
             this.$('.code-content').show();
+            this.model.set('code', newCode);
             PR.prettyPrint();
         },
 
