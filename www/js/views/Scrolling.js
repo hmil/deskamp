@@ -1,12 +1,36 @@
 define(['app', 
 		'text!/templates/Scrolling.jst',
 		'backbone'], function(app, Template) {
-	return Backbone.View.extend({
+	/**
+	* Module representing the scroll features. All scroll-related
+	* functions (edge scroll, click scroll, ...) are there
+	*/
+
+	var ScrollingView = Backbone.View.extend({
+		/**
+			@lends module:views/Scrolling~ScrollingView.prototype
+		*/
+
+		/**
+		*	The last scroll position detected
+		*/
 		lastPosition: {}, 
+
+		/**
+		*	The current position of the scroll
+		*/ 
 		currentPosition: {},
 
+		/**
+		*	The last time the view checked if a tag was present
+		*	in the viewport (in order to update the URL)
+		*/
 		lastScrollCheck: -1,
 
+		/**
+		*	Horizontal & vertical scroll speeds
+		*	(fitting to the viewport size)
+		*/
 		horizontalScrollSpeed: 0, 
 		verticalScrollSpeed: 0,
 
@@ -19,20 +43,31 @@ define(['app',
 		},
 
 		initialize: function() {
-
+			// Handling circular dependencies
 			if(!app) app = require('app');
 
-			_.bindAll(this, 'updateScrollSpeed', 'onScroll', 'scrollLeft', 'scrollRight', 'scrollTop', 'scrollBottom', 
-				'stopScroll', 'scrollTo', 'trackMouse', 'trackMove', 'untrackMouse');
+			// Binding context
+			_.bindAll(this, 
+				'updateScrollSpeed', 'onScroll', 'scrollLeft', 'scrollRight', 
+				'scrollTop', 'scrollBottom', 'stopScroll', 'scrollTo', 
+				'trackMouse', 'trackMove', 'untrackMouse');
 
+			/** 
+			* When the window is scrolled, call onScroll method so
+			* it can detect if a tag is present in the viewport 
+			*/
 			$(window).scroll(this.onScroll);
+
+			// When the window is resized, we update the scroll speed 
 			$(window).resize(this.updateScrollSpeed);
+
+			// We also need to initialize it
 			this.updateScrollSpeed();
 
+			// Track mouse position when panel is clicked, to handle click scroll
 			this.$el.on('mousedown', this.trackMouse);
 
-			
-
+			// Initializing template
 			this.template = _.template(Template);
 		},
 
@@ -44,7 +79,9 @@ define(['app',
 		onScroll: function(event) {
 		    /* Only checks every 200ms */
 		    var currentTime = new Date().getTime();
-		    if ( !(this.lastScrollCheck === -1 || new Date().getTime() - this.lastScrollCheck >= 200)) return;
+		    if ( !(this.lastScrollCheck === -1 || new Date().getTime() - this.lastScrollCheck >= 200)) {
+		    	return;
+		    }
 
 		    var scrollTop = $(document).scrollTop()
 		      , scrollLeft = $(document).scrollLeft()
@@ -67,6 +104,12 @@ define(['app',
 		    this.lastScrollCheck = currentTime;
 		},
 
+		/**
+		* Edge scrolling functions.
+		* Each of these work the same way : when mouse is detected on a edge scroller, 
+		* set an interval to update the scrollLeft / scrollTop of the map. 
+		* This interval is cleared as soon as the mouse is not on a scroller anymore.
+		*/
 		scrollLeft: function(event) {
 		    this.scrollingInterval = setInterval($.proxy(function() {
 		        $(document).scrollLeft($(document).scrollLeft()-this.horizontalScrollSpeed);
@@ -96,7 +139,13 @@ define(['app',
 		        clearInterval(this.scrollingInterval);
 		    }
 		},
-		
+
+		/**
+		*	Scrolls to (xPos, yPos) within a certain delay if specified, or immediatly
+		* 	@param {double} xPos: the x position of the point to scroll to
+		*	@param {double} yPos: the y position of the point to scroll to
+		*   @param {double} delay: (optionnal) animation delay, in milliseconds. 0 if not specified
+		*/
 		scrollTo: function(xPos, yPos, delay) {
 		    $('body, html').animate({
 		        scrollTop: yPos,
@@ -104,6 +153,9 @@ define(['app',
 		    }, delay || 0);
 		},
 
+		/**
+		*	Enable mouse move tracking when the mouse button is down
+		*/
 		trackMouse: function(event) {
 		    event.stopPropagation();
 
@@ -118,9 +170,14 @@ define(['app',
 		        top: $(document).scrollTop()
 		    };
 
-		    $(window).mousemove(this.trackMove).mouseup(this.untrackMouse);
+		    $(window)
+		    	.mousemove(this.trackMove)
+				.mouseup(this.untrackMouse);
 		},
 		
+		/**
+		*	Tracks the mouse move when the mouse button is down, to handle mouse scrolling
+		*/
 		trackMove: function(event) {
 		    event.preventDefault();
 		    event.stopPropagation();
@@ -136,6 +193,9 @@ define(['app',
 		    if (this.map) this.map.draggable.newpos();
 		},
 
+		/**
+		*	Untracks the mouse move, when the mouse button is back up
+		*/
 		untrackMouse: function(event) {
 		    event.preventDefault();
 		    event.stopPropagation();
@@ -148,4 +208,6 @@ define(['app',
 			this.$('#scrolling').html(this.template());
 		}
 	});
+
+	return ScrollingView;
 });
