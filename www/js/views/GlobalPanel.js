@@ -14,12 +14,7 @@ define ([
                     'drop': 'ondrop', 
                     'click #createTagLink': 'createTag', 
                     'keydown #newTagName': 'checkNewTagForm', 
-                    'click': 'checkHideContextMenu',
-                    // 'mouseover #left-scroller': 'scrollLeft', 
-                    // 'mouseover #right-scroller': 'scrollRight', 
-                    // 'mouseover #top-scroller': 'scrollTop', 
-                    // 'mouseover #bottom-scroller': 'scrollBottom',
-                    // 'mouseout .scroller': 'stopScroll'
+                    'click': 'checkHideContextMenu'
                 },
                 
                 /**
@@ -53,124 +48,17 @@ define ([
 
                     this.$el.bind('contextmenu', this.tagContextMenuHandler);
                     
-                    // this.$el.on('mousedown', this.trackMouse);
-                    
                     // Configures panel's width and height according to settings
                     this.$el.width(this.settings.width).height(this.settings.height);
 
                     this.scrolling = new Scrolling({
                         el: this.$el
                     });
-
-                    // $(window).scroll(this.onScroll);
-                    // $(window).resize(this.updateScrollSpeed);
-                    // this.updateScrollSpeed();
                 },
 
                 scrollTo: function(x, y, delay) {
                     this.scrolling.scrollTo(x, y, delay);
                 },
-
-                // updateScrollSpeed: function() {
-                //     this.horizontalScrollSpeed = $(window).width()/100;
-                //     this.verticalScrollSpeed = $(window).height()/100;
-                // }, 
-
-                // onScroll: function(event) {
-                //     /* Only checks every 500ms */
-                //     var currentTime = new Date().getTime();
-                //     if ( !(this.lastScrollCheck === -1 || new Date().getTime() - this.lastScrollCheck >= 500)) return;
-
-                //     var scrollTop = $(document).scrollTop()
-                //       , scrollLeft = $(document).scrollLeft()
-                //       , $el       = this.$el;
-                //     var inViewportTags = app.tags.find(function(tag) {
-                //         return (tag.get('x') >= scrollTop && tag.get('x') <= scrollLeft + $el.width())
-                //             && (tag.get('y') >= scrollTop && tag.get('y') <= scrollTop + $el.height())
-                //     });
-                //     if(typeof(inViewportTags) !== 'undefined') {
-                //         app.router.navigate("!"+inViewportTags.get('name'), false);
-                //     }
-                //     this.lastScrollCheck = currentTime;
-                // },
-
-                // scrollLeft: function(event) {
-                //     this.scrollingInterval = setInterval($.proxy(function() {
-                //         $(document).scrollLeft($(document).scrollLeft()-this.horizontalScrollSpeed);
-                //     }, this), 10);
-                // },
-
-                // scrollRight: function(event) {
-                //     console.log(this.horizontalScrollSpeed);
-                //     this.scrollingInterval = setInterval($.proxy(function() {
-                //         $(document).scrollLeft($(document).scrollLeft()+this.horizontalScrollSpeed);
-                //     }, this), 10);
-                // },
-
-                // scrollTop: function(event) {
-                //     this.scrollingInterval = setInterval($.proxy(function() {
-                //         $(document).scrollTop($(document).scrollTop()-this.verticalScrollSpeed);
-                //     }, this), 10);
-                // }, 
-
-                // scrollBottom: function(event) {
-                //     this.scrollingInterval = setInterval($.proxy(function() {
-                //         $(document).scrollTop($(document).scrollTop()+this.verticalScrollSpeed);
-                //     }, this), 10);
-                // },
-
-                // stopScroll: function(event) {
-                //     if(typeof(this.scrollingInterval) != undefined) {
-                //         clearInterval(this.scrollingInterval);
-                //     }
-                // },
-                
-                // scrollTo: function(xPos, yPos, delay) {
-                //     $('body, html').animate({
-                //         scrollTop: yPos,
-                //         scrollLeft: xPos
-                //     }, delay || 0);
-                // },
-
-                // trackMouse: function(event) {
-                //     event.stopPropagation();
-
-                //     this.$el.css('cursor', 'move');
-                //     this.initialPosition = {
-                //         left: event.clientX, 
-                //         top: event.clientY
-                //     };
-                    
-                //     this.initialScroll = {
-                //         left: $(document).scrollLeft(),
-                //         top: $(document).scrollTop()
-                //     };
-
-                //     $(window).mousemove(this.trackMove).mouseup(this.untrackMouse);
-                // },
-                
-                // trackMove: function(event) {
-                //     event.preventDefault();
-                //     event.stopPropagation();
-                //     event = event || window.event;
-                //     this.currentPosition = {
-                //         left: event.clientX, 
-                //         top: event.clientY
-                //     };
-                    
-                //     $(document).scrollLeft(this.initialScroll.left - (this.currentPosition.left - this.initialPosition.left));
-                //     $(document).scrollTop(this.initialScroll.top - (this.currentPosition.top - this.initialPosition.top));
-
-                //     if (this.map) this.map.draggable.newpos();
-                // },
-
-                // untrackMouse: function(event) {
-                //     event.preventDefault();
-                //     event.stopPropagation();
-                //     $(window).unbind('mousemove', this.trackMove)
-                //             .unbind('mouseup', this.untrackMouse);
-                //     this.$el.css('cursor', 'default');
-                // },
 
                 getHeight : function(event){
                     return this.$el.height();
