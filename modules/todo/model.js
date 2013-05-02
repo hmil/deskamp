@@ -8,14 +8,13 @@
         }, 
 
         initialize: function() {
-        	_.bindAll(this, 'addItem', 'checkItem', 'uncheckItem');
+        	_.bindAll(this, 'addItem', 'checkItem', 'uncheckItem', 'removeItem');
         },
 
         addItem: function(item) {
         	this.set('items', this.get('items').concat([item]));
         }, 
         checkItem: function(itemName) {
-        	console.log("Checking "+itemName);
         	 _.find(this.get('items'), function(i) {
         		return itemName == i.name;
         	}).done = true;

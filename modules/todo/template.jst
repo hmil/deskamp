@@ -1,15 +1,15 @@
 ﻿<div class="todolist">
     <p class="tdtitle"><%= todo.title %></p>
     <div class="todo_title_edit" style="display: none;">
-        <input type="text" class="todo_title_editbox" />
+        <form onsubmit="return false;"><input type="text" name="title" class="todo_title_editbox" /></form>
         <br /><br />
     </div>
 
-    <form id="tasks-list">
-    <input type="text" class="add_task" />
-    <input type="submit" value="Add ">
+    <form id="tasks-list" onsubmit="return false;" method="" action="">
+        <input type="text" name="task-name" id="add_task" class="add_task" />
+        <input type="submit" value="Add ">
     </form>
-    <hr>
+    <hr />
 
     <ul id="tasks">
         <% _.each(todo.items, function(item) { %>

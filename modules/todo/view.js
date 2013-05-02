@@ -16,12 +16,13 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         
         events: {
             "click [data-role=text]": "onStartEdit",
-            "submit #tasks-list": "addItem",
             "click #tasks li a ": "deleteItem", 
             "change .todolist_element>input[type=checkbox]": "checkItem",
             "click .tdtitle": "editTitle", 
             "focusout .todo_title_editbox": "finishEditTitle", 
-            "click .todolist_remove_item": "removeItem"
+            "click .todolist_remove_item": "removeItem", 
+            "keydown .todo_title_editbox": "checkEditEnd",
+            "keydown #add_task": "checkAddItemEnd"
         },
         
         initialize: function() {
@@ -29,7 +30,8 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             
             this.template = _.template(template);
 
-            _.bindAll(this, 'render', 'addItem', 'deleteItem', "editTitle", "finishEditTitle", "removeItem");
+            _.bindAll(this, 'render', 'addItem', "editTitle", 
+                "finishEditTitle", "removeItem", "checkEditEnd", "checkAddItemEnd");
             
         },
 
@@ -41,11 +43,24 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         },
 
         editTitle: function() {
-            var title = this.$('.tdtitle');
-            title.hide();
-            this.$('.todo_title_editbox').val(title.html());
+            var $title = this.$('.tdtitle');
+            var $editbox = this.$('.todo_title_editbox');
+            
+            $title.hide();
+            $editbox.val($title.html());
             this.$('.todo_title_edit').show();
+            $editbox.focus();
+            if($editbox.val() == this.model.defaults.title) {
+                $editbox.select();
+            }
         },
+
+        checkEditEnd: function(event) {
+            var keycode = event.keycode || event.which;
+            if(keycode == 13) {
+                this.finishEditTitle();
+            }
+        }, 
 
         finishEditTitle: function() {
             this.$('.todo_title_edit').hide();
@@ -55,7 +70,6 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         },
 
         checkItem: function(event) {
-            console.log("Checking item");
             var $el = $(event.target);
             if($el.is(':checked')) {
                 this.model.checkItem($el.attr('data-name'));
@@ -66,35 +80,33 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             this.render();
         }, 
 
-        addItem: function(event){
+        addItem: function(){
             if(this.$('.add_task') == '') return false;
-
-            event.preventDefault();
-            event.stopPropagation();
 
             this.model.addItem({
                 name: this.$('.add_task').val(),
                 done: false
             });
 
-            this.$('.add_task').val('').focus();
-
             this.render();
 
             return false;
         },
 
-        deleteItem: function() {
-            console.log("Deleting");
-        },
-        
+        checkAddItemEnd: function(event) {
+            var keycode = event.keycode || event.which;
+            if(keycode == 13) {
+                this.addItem();
+            }
+        }, 
+
         render: function(){
-            console.log(this.model.toJSON());
             this.$el.html(
                 this.template({
                     todo: this.model.toJSON()
                 })
             );
+            this.$('.add_task').focus();
         }
     });
 
