@@ -12,17 +12,17 @@
     <hr>
 
     <ul id="tasks">
-        <% _.each(todo.items, function(item) { %>
+        <% _.each(todo.items, function(state, name) { %>
             <li class="todolist_element">
-                <% if(item.done === true) { %>
-                <input type="checkbox" data-name="<%= item.name %>" id="<%= item.name %>" checked /> 
-                <strike><label for="<%= item.name %>"><%= item.name %></label></strike>
+                <% if(state === true) { %>
+                <input type="checkbox" data-name="<%= name %>" id="<%= name %>" checked /> 
+                <strike><label for="<%= name %>"><%= name %></label></strike>
                 <% } else { %>
-                    <input type="checkbox" data-name="<%= item.name %>" id="<%= item.name %>"/> 
-                    <label for="<%= item.name %>"><%= item.name %></label>
+                    <input type="checkbox" data-name="<%= name %>" id="<%= name %>"/> 
+                    <label for="<%= name %>"><%= name %></label>
                 <% } %>
 
-                <img style="float: right; margin-right: 10px;" src="/img/delete.png" class="todolist_remove_item" title="Remove" data-name="<%= item.name %>" />
+                <img style="float: right; margin-right: 10px;" src="/img/delete.png" class="todolist_remove_item" title="Remove" data-name="<%= name %>" />
             </li>
         <% }); %>
     </ul>

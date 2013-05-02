@@ -1,13 +1,18 @@
-﻿define(['backbone'], function(){
+﻿define(['core'], function(Core){
     
-    return Backbone.Model.extend({
+    return Core.Model.extend({
+        
+        url: 'drawing',
         
         defaults: {
             path: []
         },
         
         addPath: function(path){
-            this.set('path', this.get('path').concat([path]));
+            var p = _.clone(this.get('path'));
+            p.push(path);
+            
+            this.set('path', p);
         }
         
     });

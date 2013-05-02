@@ -22,7 +22,6 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         },
         
         initialize: function(){
-            this.model = new Model(this.model);
             
             this.template = _.template(template);
             
@@ -31,11 +30,11 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
 
             _.bindAll(this, 'render', 'onMousemove', 'onMouseup', 'onMousedown');
             
-            this.render();
+            this.model.on('change', this.render);
         },
         
         render: function(){
-            
+            console.log("rendering");
             this.$el.html(
                 this.template({
                     width:  this.canvasWidth  ,

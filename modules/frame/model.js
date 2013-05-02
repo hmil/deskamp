@@ -1,6 +1,7 @@
-﻿define(['backbone'], function(){
+﻿define(['core'], function(Core){
     
-    return Backbone.Model.extend({
+    return Core.Model.extend({
+        url: 'frame',
         
         defaults: {
             title: 'New frame'

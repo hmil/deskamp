@@ -1,36 +1,41 @@
-﻿define(['backbone'], function(){
+﻿define(['core'], function(Core){
     
-    return Backbone.Model.extend({
+    return Core.Model.extend({
+        
+        url: 'todo',
         
         defaults: {
             title: 'My todo list', 
-            items: []
+            items: {}
         }, 
 
         initialize: function() {
         	_.bindAll(this, 'addItem', 'checkItem', 'uncheckItem');
         },
 
-        addItem: function(item) {
-        	this.set('items', this.get('items').concat([item]));
+        addItem: function(itemName) {
+            //This will create a new item
+            this.setItemState(itemName, false);
         }, 
+        
         checkItem: function(itemName) {
-        	console.log("Checking "+itemName);
-        	 _.find(this.get('items'), function(i) {
-        		return itemName == i.name;
-        	}).done = true;
-             this.trigger('change');
-        }, 
+        	this.setItemState(itemName, true);
+        },
+        
         uncheckItem: function(itemName) {
-        	 _.find(this.get('items'), function(i) {
-        		return itemName == i.name;
-        	}).done = false;
-             this.trigger('change');
-        }, 
+        	this.setItemState(itemName, false);
+        },
+        
+        setItemState: function(itemName, state){
+            var items = _.clone(this.get('items'));
+            items[itemName] = state;
+            this.set('items', items);
+        },
+        
         removeItem: function(itemName) {
-        	this.set('items', _.filter(this.get('items'), function(item) {
-        		return item.name != itemName;
-        	}));
+            var items = _.clone(this.get('items'));
+        	delete items[itemName];
+            this.set('items', items);
         }
         
     });

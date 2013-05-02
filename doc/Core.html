@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: views/Map</title>
+    <title>JSDoc: Namespace: Core</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Module: views/Map</h1>
+    <h1 class="page-title">Namespace: Core</h1>
     
     
 
@@ -27,7 +27,7 @@
     
 <header>
     <h2>
-    views/Map
+    Core
     </h2>
     
 </header>  
@@ -38,7 +38,7 @@
     
     
         
-            <div class="description">A module representing the map.</div>
+            <div class="description">Core object containing everything the user-defined models may use.</div>
         
         
         
@@ -64,7 +64,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Map.js.html">views/Map.js</a>, <a href="Map.js.html#line7">line 7</a>
+        <a href="Core.js.html">Core.js</a>, <a href="Core.js.html#line9">line 9</a>
     </li></ul></dd>
     
     
@@ -87,16 +87,77 @@
     
     
     
-        <h3 class="subsection-title">Classes</h3>
+    
+    
+    
+    
+        <h3 class="subsection-title">Members</h3>
         
         <dl>
-            <dt><a href="Map-MapView.html">MapView</a></dt>
-            <dd></dd>
+            
+<dt>
+    <h4 class="name" id="Model"><span class="type-signature">&lt;static> </span>Model<span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Base class for synced model. These models are synced with the server at all times. 
+When an attribute is set, the server is notified and the server can push modification to it.
+    </div>
+    
+    
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Sync.js.html">util/Sync.js</a>, <a href="Sync.js.html#line169">line 169</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code> var Sync = require('util/Sync');
+ var MySyncedModel = Sync.Model.extends({
+     defaults: ...
+     initialize: ...
+ });</code></pre>
+
+    
+</dd>
+
         </dl>
-    
-    
-    
-    
     
     
     

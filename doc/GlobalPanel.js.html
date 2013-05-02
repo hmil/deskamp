@@ -31,21 +31,17 @@ define ([
     'models/Tag',
     '/js/views/Widget.js',
     '/js/models/Widget.js',
+    '/js/views/Scrolling.js',
     'modules',
      'backbone'],
-    function(app, Tag, Widget, WidgetModel, modules){
+    function(app, Tag, Widget, WidgetModel, Scrolling, modules){
             return Backbone.View.extend({
                 
                 events: {
                     'drop': 'ondrop', 
                     'click #createTagLink': 'createTag', 
                     'keydown #newTagName': 'checkNewTagForm', 
-                    'click': 'checkHideContextMenu',
-                    'mouseover #left-scroller': 'scrollLeft', 
-                    'mouseover #right-scroller': 'scrollRight', 
-                    'mouseover #top-scroller': 'scrollTop', 
-                    'mouseover #bottom-scroller': 'scrollBottom',
-                    'mouseout .scroller': 'stopScroll'
+                    'click': 'checkHideContextMenu'
                 },
                 
                 /**
@@ -61,13 +57,16 @@ define ([
                 lastPosition: {}, 
                 currentPosition: {},
 
+                lastScrollCheck: -1,
+
+                horizontalScrollSpeed: 0, 
+                verticalScrollSpeed: 0,
+
                 initialize : function(){
                     
                     if(!app) app = require('app');
                     
-                    _.bindAll(this, 'ondrop', 'updatePosition', 'trackMouse', 'untrackMouse', 
-                        'trackMove', 'createWidget', 'createTag', 'checkNewTagForm', 'tagContextMenuHandler', 
-                        'scrollLeft', 'scrollRight', 'scrollTop', 'scrollBottom', 'stopScroll');
+                    _.bindAll(this, 'ondrop', 'updatePosition', 'createWidget', 'createTag', 'checkNewTagForm', 'tagContextMenuHandler');
                     
                     app.widgets.on('add', this.createWidget);
                     
@@ -76,87 +75,16 @@ define ([
 
                     this.$el.bind('contextmenu', this.tagContextMenuHandler);
                     
-                    this.$el.on('mousedown', this.trackMouse);
-                    
                     // Configures panel's width and height according to settings
                     this.$el.width(this.settings.width).height(this.settings.height);
+
+                    this.scrolling = new Scrolling({
+                        el: this.$el
+                    });
                 },
 
-                scrollLeft: function(event) {
-                    this.scrollingInterval = setInterval(function() {
-                        $(document).scrollLeft($(document).scrollLeft()-20);
-                    }, 10);
-                },
-
-                scrollRight: function(event) {
-                    this.scrollingInterval = setInterval(function() {
-                        $(document).scrollLeft($(document).scrollLeft()+20);
-                    }, 10);
-                },
-
-                scrollTop: function(event) {
-                    this.scrollingInterval = setInterval(function() {
-                        $(document).scrollTop($(document).scrollTop()-20);
-                    }, 10);
-                }, 
-
-                scrollBottom: function(event) {
-                    this.scrollingInterval = setInterval(function() {
-                        $(document).scrollTop($(document).scrollTop()+20);
-                    }, 10);
-                },
-
-                stopScroll: function(event) {
-                    if(typeof(this.scrollingInterval) != undefined) {
-                        clearInterval(this.scrollingInterval);
-                    }
-                },
-                
-                scrollTo: function(xPos, yPos, delay) {
-                    $('body, html').animate({
-                        scrollTop: yPos,
-                        scrollLeft: xPos
-                    }, delay || 0);
-                },
-
-                trackMouse: function(event) {
-                    event.stopPropagation();
-
-                    this.$el.css('cursor', 'move');
-                    this.initialPosition = {
-                        left: event.clientX, 
-                        top: event.clientY
-                    };
-                    
-                    this.initialScroll = {
-                        left: $(document).scrollLeft(),
-                        top: $(document).scrollTop()
-                    };
-
-                    $(window).mousemove(this.trackMove).mouseup(this.untrackMouse);
-                },
-                
-                trackMove: function(event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    event = event || window.event;
-                    this.currentPosition = {
-                        left: event.clientX, 
-                        top: event.clientY
-                    };
-                    
-                    $(document).scrollLeft(this.initialScroll.left - (this.currentPosition.left - this.initialPosition.left));
-                    $(document).scrollTop(this.initialScroll.top - (this.currentPosition.top - this.initialPosition.top));
-
-                    if (this.map) this.map.draggable.newpos();
-                },
-
-                untrackMouse: function(event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    $(window).unbind('mousemove', this.trackMove)
-                            .unbind('mouseup', this.untrackMouse);
-                    this.$el.css('cursor', 'default');
+                scrollTo: function(x, y, delay) {
+                    this.scrolling.scrollTo(x, y, delay);
                 },
 
                 getHeight : function(event){
@@ -239,7 +167,10 @@ define ([
                     if(!name) return; // We dont want to drop a new widget
                     
                     app.widgets.create({
-                        coords: event.pageX+" "+event.pageY,
+                        coords: {
+                            x: event.pageX,
+                            y: event.pageY
+                        },
                         wrappedView: modules[name].view,
                         wrappedName: name
                     });
@@ -252,6 +183,10 @@ define ([
                     });
 
                     this.$el.append(wid.$el);
+                }, 
+
+                render: function() {
+                    this.scrolling.render();
                 }
 
             })
@@ -266,13 +201,13 @@ define ([
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="Map.html">views/Map</a></li></ul><h3>Classes</h3><ul><li><a href="Map-MapView.html">MapView</a></li></ul><h3>Global</h3><ul><li><a href="global.html#define">define</a></li><li><a href="global.html#require">require</a></li><li><a href="global.html#requirejs">requirejs</a></li><li><a href="global.html#settings">settings</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="Map.html">views/Map</a></li></ul><h3>Classes</h3><ul><li><a href="Map-MapView.html">MapView</a></li></ul><h3>Namespaces</h3><ul><li><a href="Core.html">Core</a></li><li><a href="Sync.html">Sync</a></li></ul><h3>Global</h3><ul><li><a href="global.html#define">define</a></li><li><a href="global.html#require">require</a></li><li><a href="global.html#requirejs">requirejs</a></li><li><a href="global.html#settings">settings</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Tue Apr 30 2013 20:45:35 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Thu May 02 2013 13:36:35 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>

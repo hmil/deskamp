@@ -1,6 +1,6 @@
 var theID = 0;
 
-module.exports = function(io){
+module.exports = function(io, modules){
     
     io.sockets.on('connection', function (socket) {
         socket
@@ -16,6 +16,9 @@ module.exports = function(io){
         }).on('delete:widget', function(id){
             socket.broadcast.emit('delete:widget'+'_'+id);
         });
+        
+        // Configures the modules api on this socket
+        modules.populateSocket(socket);
     });
     
 };

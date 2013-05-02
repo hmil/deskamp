@@ -19,12 +19,12 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         },
 
         initialize: function() {
-            this.model = new Model(this.model);
             
             this.template = _.template(template);
 
             _.bindAll(this, 'render', "editTitle", "finishEditTitle");
             
+            this.model.on('change', this.render);
         },
 
         editTitle: function() {

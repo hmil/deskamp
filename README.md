@@ -10,4 +10,4 @@ install jsdoc3
 `npm install -g git://github.com/jsdoc3/jsdoc.git`
 
 Then, to generate documentation :  
-`rm -r doc/ && jsdoc -r www/js/ -d doc/`
+`rm -r doc/ & jsdoc -r www/js/ -d doc/`

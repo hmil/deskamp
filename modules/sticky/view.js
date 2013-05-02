@@ -48,11 +48,12 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         },
 
         initialize: function(){
-            this.model = new Model(this.model);
             
             this.template = _.template(template);
 
             _.bindAll(this, 'render', 'finishEdit', 'editContent', 'finishContentEdit');
+            
+            this.model.on('change', this.render);
         },
 
         finishEdit: function() {
@@ -62,6 +63,8 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         },
         
         render: function(){
+            console.log("rendering sticky :");
+            console.log(this.model.toJSON());
             var model = this.model.toJSON();
             this.$el.html(
                 this.template({

@@ -5,9 +5,8 @@ define ([
     '/js/views/Widget.js',
     '/js/models/Widget.js',
     '/js/views/Scrolling.js',
-    'modules',
      'backbone'],
-    function(app, Tag, Widget, WidgetModel, Scrolling, modules){
+    function(app, Tag, WidgetView, WidgetModel, Scrolling){
             return Backbone.View.extend({
                 
                 events: {
@@ -144,14 +143,13 @@ define ([
                             x: event.pageX,
                             y: event.pageY
                         },
-                        wrappedView: modules[name].view,
-                        wrappedName: name
-                    });
+                        name: name
+                    }, {parse: true});
                 },
                 
                 createWidget: function(model){
                     console.log('adding');
-                    var wid = new Widget({
+                    var wid = new WidgetView({
                         model: model
                     });
 

@@ -25,11 +25,13 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         },
         
         initialize: function() {
-            this.model = new Model(this.model);
             
             this.template = _.template(template);
 
             _.bindAll(this, 'render', 'addItem', 'deleteItem', "editTitle", "finishEditTitle", "removeItem");
+            
+            // This is dirty, consider changing
+            this.model.on('change', this.render);
             
         },
 
@@ -37,7 +39,6 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             var $el = $(event.target);
             console.log($el.attr('data-name'));
             this.model.removeItem($el.attr('data-name'));
-            this.render();
         },
 
         editTitle: function() {
@@ -63,7 +64,6 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             else {
                 this.model.uncheckItem($el.attr('data-name'));
             }
-            this.render();
         }, 
 
         addItem: function(event){
@@ -72,14 +72,9 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             event.preventDefault();
             event.stopPropagation();
 
-            this.model.addItem({
-                name: this.$('.add_task').val(),
-                done: false
-            });
+            this.model.addItem(this.$('.add_task').val());
 
             this.$('.add_task').val('').focus();
-
-            this.render();
 
             return false;
         },

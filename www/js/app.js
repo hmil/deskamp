@@ -34,23 +34,11 @@ define([
 
         this.widgets = new Widgets();
         
-       
+        // Allows the server to create widgets
+        Sync.makeFactory('widget', this.widgets);
         
-        var socket = io.connect('/');
-        
-        // Creates a sync with the socket
-        var sync = Sync(socket);
-        
-        // Server pushing widgets
-        socket.on('create:widget', $.proxy(function(data){
-            var widget = this.widgets.create(_.extend(data, {wrappedView: modules[data.wrappedName].view}));
-            sync.makeLive(widget);
-            widget.trigger('sync'); // The server pushed this so it seems ok to fire this event
-        }, this));
-            
-        Backbone.sync = sync.sync;
-        
-        
+        // Overrides default backbone sync
+        Backbone.sync = Sync.sync;
         
         var arguments = {};
         

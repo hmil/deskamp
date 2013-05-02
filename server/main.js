@@ -7,7 +7,8 @@ var app = express()
 	, io = require('socket.io').listen(server)
 	, mongoose = require('mongoose/')
 	, database = mongoose.connect('mongodb://localhost/hackathon', function(err) { if(err) throw err; })
-    , socketAPI = require('./socketAPI');
+    , socketAPI = require('./socketAPI')
+    , Modules = require('./modules');
 
 db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -30,12 +31,14 @@ db.once('open', function () {
     // });
 
     // Loads the custom modules
-    require('./modules.js')(app);
+    var modules = new Modules();
+    
+    modules.route(app);
 
     //Configures the application
     require('./config.js')(app);
 
-    socketAPI(io);
+    socketAPI(io, modules);
 
     var events = require ('./events.js')(io, WidgetModel);
     console.log('will create test widget')
@@ -45,7 +48,7 @@ db.once('open', function () {
         x:100,
         y:100,
         cid:2,
-        data:'GROSSES FESSES'
+        data:'test1'
     }
     var test2 = {
         width:100,
@@ -53,23 +56,12 @@ db.once('open', function () {
         x:300,
         y:300,
         cid:5,
-        data:'FUCKING TEST'
+        data:'test'
     }
     thisisatest.id = events.create(thisisatest);
     test2.id = events.create(test2);
     thisisatest.x=200;
     events.update(thisisatest);
-    /*
-
-    API calls :
-
-    GET 	/widgets/get/all
-    GET 	/widgets/get/:id
-    POST 	/widgets/new/
-    PUT 	/widgets/setPosition/:x/:y
-    PUT 	/widgets/setAttribute/:attribute/:value
-    DELETE 	/widgets/delete/:id
-    */
 
 
     server.listen(app.get('port'), function() {

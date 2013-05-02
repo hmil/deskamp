@@ -1,6 +1,8 @@
-﻿define(['backbone'], function(){
+﻿define(['core'], function(Core){
     
-    return Backbone.Model.extend({
+    return Core.Model.extend({
+        
+        url: 'sticky',
         
         defaults: {
             text: 'New sticky note'

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: views/Map</title>
+    <title>JSDoc: Source: Core.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,96 +17,30 @@
 
 <div id="main">
     
-    <h1 class="page-title">Module: views/Map</h1>
+    <h1 class="page-title">Source: Core.js</h1>
     
     
 
 
-
-<section>
     
-<header>
-    <h2>
-    views/Map
-    </h2>
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>
+define(['util/sync'], function(Sync){
+    /** 
+     * Core object containing everything the user-defined models may use.
+     * @exports Core
+     * @namespace
+     * @borrows Sync.Model as Model
+     */
+    var Core = {
+        Model: Sync.Model
+    };
     
-</header>  
-
-<article>
-    <div class="container-overview">
-    
-    
-    
-        
-            <div class="description">A module representing the map.</div>
-        
-        
-        
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Map.js.html">views/Map.js</a>, <a href="Map.js.html#line7">line 7</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-        
-        
-    
-    </div>
-    
-    
-    
-    
-    
-    
-    
-    
-        <h3 class="subsection-title">Classes</h3>
-        
-        <dl>
-            <dt><a href="Map-MapView.html">MapView</a></dt>
-            <dd></dd>
-        </dl>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-</article>
-
-</section>  
+    return Core;
+});</code></pre>
+        </article>
+    </section>
 
 
 

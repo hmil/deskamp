@@ -24,26 +24,21 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
             if(!app) app = require('app');
             
 			if(!this.model) {
-				this.model = new Widget();
-				app.widgets.add(this.model);
-                this.model.save();
+                throw "Widget cannot be instanciated without a model property !";
 			}
             
-			_.bindAll(this, 'render', 'onDelete', 'updatePosition', 'onMouseenter', 'onMouseleave', 'onDragStart', 'updateCoords', 'onWrappedModelChange', 'onResize');
+			_.bindAll(this, 'render', 'onDelete', 'updatePosition', 'onMouseenter', 'onMouseleave', 'onDragStart', 'updateCoords', 'updateSize', 'onResize');
             
             this.model.on('change:coords', this.updateCoords);
+            this.model.on('change:size', this.updateSize);
             this.model.on('change:contents', this.render);
             this.isDragged = false;
 
-			// !\ NO INSTANCE should be passed as 'wrapped', only object
-			this.wrapped = this.model.get('wrappedView');
+			this.wrapped = this.model.get('contentsView');
             
             this.model.on('destroy', $.proxy(function(){
                 this.onDelete()
             }, this));
-            
-            console.log("wrapped :");
-            console.log(this.wrapped);
             
 			this.template = _.template(WidgetTemplate);
 
@@ -60,6 +55,11 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
                 left: c.x,
                 top: c.y
             });
+        },
+        
+        updateSize: function(){
+            var s = this.model.get('size');
+            this.$el.width(s.width).height(s.height);
         },
 
 		onDelete: function(evt) {
@@ -84,22 +84,15 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
                 y: ui.position.top
             });
 		},
-        
-        onWrappedModelChange: function(){
-            this.model.set('contents', JSON.stringify(this.wrappedView.model.toJSON()));
-        },
 
 		render: function() {
 			this.$el.html(this.template());
 
 			var wrappedView = this.wrappedView = new this.wrapped({
 				el: this.$('.widget_content'),
-                model: JSON.parse(this.model.get('contents'))
+                model: this.model.get('contentsModel')
 			});
 			wrappedView.render();
-            
-            wrappedView.model.on('change', this.onWrappedModelChange);
-            
             
 			var width = (wrappedView.defaultSize) ? wrappedView.defaultSize.width : 200;
 			var height = (wrappedView.defaultSize) ? wrappedView.defaultSize.height : 300;

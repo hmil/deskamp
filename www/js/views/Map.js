@@ -6,9 +6,6 @@
     */
     function(templateString){
     
-    /** 
-        @constructor
-    */
     var MapView = Backbone.View.extend(
         /** 
             @lends module:views/Map~MapView.prototype
@@ -31,6 +28,9 @@
                 height: 150
             },
             
+            /**
+             *  @Constructs
+             */
             initialize: function(hash){
             
                 this.template = _.template( templateString );
@@ -87,12 +87,9 @@
              */
             drawCanvas: function(){
                 
-                console.log("drawing canvas");
-                
                 this.ctx.fillStyle = "#fff";
                 this.ctx.fillRect(0, 0, this.canvas.width(), this.canvas.height());
                 
-                console.log(this.canvas.width()+' '+this.canvas.height());
                 var coll = app.widgets.models;
                 
                 for(var i in coll){

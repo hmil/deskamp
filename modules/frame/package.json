@@ -4,6 +4,7 @@
     "author"    : "",
     
     "view"      : "view.js",
+    "model"     : "model.js",
     "style"     : "style.css",
     
     "icon"      : "icon.png",
