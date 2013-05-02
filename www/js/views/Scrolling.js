@@ -42,7 +42,7 @@ define(['app',
 		edgeScrollDelay: 350,
 
 		events: {
-			'mouseout .scroller': 'stopScroll'
+			'mouseout .scroller': 'stopScroll',
 		},
 
 		initialize: function() {
@@ -52,7 +52,8 @@ define(['app',
 			// Binding context
 			_.bindAll(this, 
 				'updateScrollSpeed', 'onScroll', 'stopScroll', 'scrollTo', 
-				'trackMouse', 'trackMove', 'untrackMouse', 'edgeScroll');
+				'trackMouse', 'trackMove', 'untrackMouse', 'edgeScroll', 
+				'arrowsScroll', 'launchScroll', 'stopArrowsScroll');
 
 			/** 
 			* When the window is scrolled, call onScroll method so
@@ -71,12 +72,15 @@ define(['app',
 
 			// Initializing template
 			this.template = _.template(Template);
+
+			$('html').keydown(this.arrowsScroll);
+			$('html').keyup(this.stopArrowsScroll);
 		},
 
 		updateScrollSpeed: function() {
 		    this.horizontalScrollSpeed = $(window).width()/100;
 		    this.verticalScrollSpeed = $(window).height()/100;
-		}, 
+		},
 
 		onScroll: function(event) {
 		    /* Only checks every 200ms */
@@ -113,7 +117,6 @@ define(['app',
 		*/
 
 		edgeScroll: function(event) {
-			console.log($(event.target).attr('data-scroll'));
 			var xIncrement = 0
 			  , yIncrement = 0;
 
@@ -133,10 +136,52 @@ define(['app',
 				default: 
 					return;
 			}
+			this.launchScroll(xIncrement, yIncrement);
+		},
+
+		arrowsScroll: function(event) {
+			var keycode = event.keycode || event.which;
+			if(keycode != 40 && keycode != 38 && keycode != 37 && keycode != 39) return;
+			console.log(keycode);
+			var xIncrement = 0
+			  , yIncrement = 0;
+
+			 switch(keycode) {
+			 	case 38: // Up arrow
+			 		yIncrement = -this.verticalScrollSpeed;
+			 		break;
+			 	case 40: // Down arrow
+			 		yIncrement = this.verticalScrollSpeed;
+			 		break;
+			 	case 37: // Left arrow
+			 		xIncrement = -this.horizontalScrollSpeed;
+			 		break;
+			 	case 39: // Right arrow
+			 		xIncrement = this.horizontalScrollSpeed;
+			 		break;
+			 }
+			 this.launchScroll(xIncrement, yIncrement);
+
+		}, 
+
+		launchScroll: function(xIncrement,  yIncrement) {
+			if(typeof(xIncrement) === 'undefined' || typeof(yIncrement) === 'undefined') return;
+
+			// If there already a scroll interval, we clear it
+			this.stopScroll();
+
+			// We define the scrolling interval
 			this.scrollingInterval = setInterval($.proxy(function() {
 				if(xIncrement !== 0) $(document).scrollLeft($(document).scrollLeft() + xIncrement);
 				if(yIncrement !== 0) $(document).scrollTop($(document).scrollTop() + yIncrement);
 			}, this), 10);
+		},
+
+		stopArrowsScroll: function(event) {
+			var keycode = event.keycode || event.which;
+			if( (keycode == 40 || keycode == 38 || keycode == 37 || keycode == 39)) {
+				this.stopScroll();
+			}
 		},
 		
 		stopScroll: function(event) {
