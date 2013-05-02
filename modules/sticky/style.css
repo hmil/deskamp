@@ -40,8 +40,15 @@
     right: 5px;
     bottom: 5px;
     overflow: auto;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 1em;
+    cursor: text;
 }
 
 .sticky_content_editbox {
-    
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0);
+    font-family: "Times New Roman", Times, serif;
+    font-size: 1em;
 }
