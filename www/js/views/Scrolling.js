@@ -1,5 +1,6 @@
 define(['app', 
 		'text!/templates/Scrolling.jst',
+		'hoverIntent',
 		'backbone'], function(app, Template) {
 	/**
 	* Module representing the scroll features. All scroll-related
@@ -34,11 +35,13 @@ define(['app',
 		horizontalScrollSpeed: 0, 
 		verticalScrollSpeed: 0,
 
+		/**
+		*	Delay to wait (in milliseconds) when the mouse is
+		*   on a edge scroller before beginning the scroll
+		*/
+		edgeScrollDelay: 350,
+
 		events: {
-			'mouseover #left-scroller': 'scrollLeft', 
-			'mouseover #right-scroller': 'scrollRight', 
-			'mouseover #top-scroller': 'scrollTop', 
-			'mouseover #bottom-scroller': 'scrollBottom',
 			'mouseout .scroller': 'stopScroll'
 		},
 
@@ -48,9 +51,8 @@ define(['app',
 
 			// Binding context
 			_.bindAll(this, 
-				'updateScrollSpeed', 'onScroll', 'scrollLeft', 'scrollRight', 
-				'scrollTop', 'scrollBottom', 'stopScroll', 'scrollTo', 
-				'trackMouse', 'trackMove', 'untrackMouse');
+				'updateScrollSpeed', 'onScroll', 'stopScroll', 'scrollTo', 
+				'trackMouse', 'trackMove', 'untrackMouse', 'edgeScroll');
 
 			/** 
 			* When the window is scrolled, call onScroll method so
@@ -105,35 +107,38 @@ define(['app',
 		},
 
 		/**
-		* Edge scrolling functions.
-		* Each of these work the same way : when mouse is detected on a edge scroller, 
-		* set an interval to update the scrollLeft / scrollTop of the map. 
-		* This interval is cleared as soon as the mouse is not on a scroller anymore.
+		* Edge scrolling function.
+		* Sets a timeout with a scroll increment depending
+		* on which scroller the mouse is
 		*/
-		scrollLeft: function(event) {
-		    this.scrollingInterval = setInterval($.proxy(function() {
-		        $(document).scrollLeft($(document).scrollLeft()-this.horizontalScrollSpeed);
-		    }, this), 10);
+
+		edgeScroll: function(event) {
+			console.log($(event.target).attr('data-scroll'));
+			var xIncrement = 0
+			  , yIncrement = 0;
+
+			switch($(event.target).attr('data-scroll').toLowerCase()) {
+				case 'left': 
+					xIncrement = -this.horizontalScrollSpeed;
+					break;
+				case 'right': 
+					xIncrement = this.horizontalScrollSpeed;
+					break;
+				case 'top': 
+					yIncrement = -this.verticalScrollSpeed;
+					break;
+				case 'bottom': 
+					yIncrement = this.verticalScrollSpeed;
+					break;
+				default: 
+					return;
+			}
+			this.scrollingInterval = setInterval($.proxy(function() {
+				if(xIncrement !== 0) $(document).scrollLeft($(document).scrollLeft() + xIncrement);
+				if(yIncrement !== 0) $(document).scrollTop($(document).scrollTop() + yIncrement);
+			}, this), 10);
 		},
-
-		scrollRight: function(event) {
-		    this.scrollingInterval = setInterval($.proxy(function() {
-		        $(document).scrollLeft($(document).scrollLeft()+this.horizontalScrollSpeed);
-		    }, this), 10);
-		},
-
-		scrollTop: function(event) {
-		    this.scrollingInterval = setInterval($.proxy(function() {
-		        $(document).scrollTop($(document).scrollTop()-this.verticalScrollSpeed);
-		    }, this), 10);
-		}, 
-
-		scrollBottom: function(event) {
-		    this.scrollingInterval = setInterval($.proxy(function() {
-		        $(document).scrollTop($(document).scrollTop()+this.verticalScrollSpeed);
-		    }, this), 10);
-		},
-
+		
 		stopScroll: function(event) {
 		    if(typeof(this.scrollingInterval) != undefined) {
 		        clearInterval(this.scrollingInterval);
@@ -206,6 +211,7 @@ define(['app',
 
 		render: function() {
 			this.$('#scrolling').html(this.template());
+			this.$('.scroller').hoverIntent(this.edgeScroll, function(){}, this.edgeScrollDelay);
 		}
 	});
 
