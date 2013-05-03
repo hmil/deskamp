@@ -22,19 +22,18 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             "focusout .todo_title_editbox": "finishEditTitle", 
             "click .todolist_remove_item": "removeItem", 
             "keydown .todo_title_editbox": "checkEditEnd",
-            "keydown #add_task": "checkAddItemEnd"
+            "submit [data-action=addItem]": "onAddItemSubmit"
         },
         
         initialize: function() {
             
             this.template = _.template(template);
 
-            _.bindAll(this, 'render', 'addItem', "editTitle", 
-                "finishEditTitle", "removeItem", "checkEditEnd", "checkAddItemEnd");
+            _.bindAll(this, 'render', "editTitle", 
+                "finishEditTitle", "removeItem", "checkEditEnd", "onAddItemSubmit");
             
             // This is dirty, consider changing
             this.model.on('change', this.render);
-            
         },
 
         removeItem: function(event) {
@@ -78,27 +77,14 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             else {
                 this.model.uncheckItem($el.attr('data-name'));
             }
-        }, 
-
-        addItem: function(){
-            if(this.$('.add_task') == '') return false;
-
+        },
+        
+        onAddItemSubmit: function(event){
             event.preventDefault();
             event.stopPropagation();
-
-            this.model.addItem(this.$('.add_task').val());
-
-            this.$('.add_task').val('').focus();
-
-            return false;
+            
+            this.model.addItem(this.addTaskNameInput.val());
         },
-
-        checkAddItemEnd: function(event) {
-            var keycode = event.keycode || event.which;
-            if(keycode == 13) {
-                this.addItem();
-            }
-        }, 
 
         render: function(){
             this.$el.html(
@@ -106,7 +92,9 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
                     todo: this.model.toJSON()
                 })
             );
-            this.$('.add_task').focus();
+            
+            this.addTaskNameInput = this.$('[data-addTask=name]');
+            this.addTaskNameInput.focus();
         }
     });
 

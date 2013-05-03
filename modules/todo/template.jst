@@ -1,24 +1,24 @@
 ﻿<div class="todolist">
     <p class="tdtitle"><%= todo.title %></p>
     <div class="todo_title_edit" style="display: none;">
-        <form onsubmit="return false;"><input type="text" name="title" class="todo_title_editbox" /></form>
+        <form onsubmit="return false;" action="#"><input type="text" name="title" class="todo_title_editbox" /></form>
         <br /><br />
     </div>
 
-    <form id="tasks-list" onsubmit="return false;" method="" action="">
-        <input type="text" name="task-name" id="add_task" class="add_task" />
+    <form class="tasks-list" onsubmit="return false;" method="" action="#" data-action="addItem">
+        <input type="text" name="task-name" class="add_task" data-addTask="name"/>
         <input type="submit" value="Add ">
     </form>
     <hr />
 
-    <ul id="tasks">
+    <ul class="tasks">
         <% _.each(todo.items, function(state, name) { %>
             <li class="todolist_element">
                 <% if(state === true) { %>
-                <input type="checkbox" data-name="<%= name %>" id="<%= name %>" checked /> 
+                <input type="checkbox" data-name="<%= name %>" class="<%= name %>" checked /> 
                 <strike><label for="<%= name %>"><%= name %></label></strike>
                 <% } else { %>
-                    <input type="checkbox" data-name="<%= name %>" id="<%= name %>"/> 
+                    <input type="checkbox" data-name="<%= name %>" class="<%= name %>"/> 
                     <label for="<%= name %>"><%= name %></label>
                 <% } %>
 
