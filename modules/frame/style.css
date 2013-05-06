@@ -12,7 +12,7 @@
     border-color: #1e5799; 
     border-style: solid;
     background: white;
-    
+
 
 
 }
@@ -27,5 +27,6 @@
     border-style:solid;
 
     border-color: #1e5799; 
+    display-content: none;
 
 }

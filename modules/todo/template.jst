@@ -2,14 +2,14 @@
     <p class="tdtitle"><%= todo.title %></p>
     <div class="todo_title_edit" style="display: none;">
         <form onsubmit="return false;" action="#"><input type="text" name="title" class="todo_title_editbox" /></form>
-        <br /><br />
+        <br />
     </div>
+    <hr />
 
     <form class="tasks-list" onsubmit="return false;" method="" action="#" data-action="addItem">
-        <input type="text" name="task-name" class="add_task" data-addTask="name"/>
-        <input type="submit" value="Add ">
+        <input type="text" placeholder='Add task.' name="task-name" class="add_task" data-addTask="name"/>
     </form>
-    <hr />
+    
 
     <ul class="tasks">
         <% _.each(todo.items, function(state, name) { %>
