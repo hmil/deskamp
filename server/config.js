@@ -12,7 +12,7 @@ module.exports = function(app){
     
     //Setting log level for development
     app.configure('development', function(){
-        app.use(express.logger('dev'));
+        // app.use(express.logger('dev'));
     });
 
     //Express configuration

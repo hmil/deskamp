@@ -14,11 +14,11 @@ define([
     'collections/Widgets',
     'models/Widget',
     'views/Map',
-    'modules',
+    'starter',
     'socket.io',
     'backbone', 
     'Router'],
-    function(Tag, TagsCollection, WidgetBar, GlobalPanel, Sync, Widgets, Widget, Map, modules){
+    function(Tag, TagsCollection, WidgetBar, GlobalPanel, Sync, Widgets, Widget, Map, starter){
 
 
     // App is a singleton object
@@ -35,7 +35,7 @@ define([
         this.widgets = new Widgets();
         
         // Allows the server to create widgets
-        Sync.makeFactory('widget', this.widgets);
+        Sync.makeFactory('widget', this.widgets);       
         
         // Overrides default backbone sync
         Backbone.sync = Sync.sync;
@@ -64,6 +64,8 @@ define([
             window.location.hash = '/';
         }
         
+        starter();
+        this.widgets.fetch();
         console.log("app initialized");
     };
     
