@@ -1,4 +1,4 @@
-﻿define(['core'], function(Core){
+﻿define(['Core'], function(Core){
     
     return Core.Model.extend({
         url: 'frame',
