@@ -15,7 +15,7 @@ define(['util/Sync', 'modules', 'backbone'], function(Sync, modules) {
             contentsModelId: ''
         },
         
-        initialize: function(args){
+        initialize: function(args, options){
             console.log("widget initialized");
             
             if(!this.get('name')){
@@ -28,7 +28,7 @@ define(['util/Sync', 'modules', 'backbone'], function(Sync, modules) {
             
             var contentsId = this.get('contentsModelId');
             // User just created the widget
-            if(contentsId == ''){
+            if(options.client){
                 this.contentsModel = modules[this.get('name')].collection.create();
                 this.contentsModel.on('change:_id', this.onContentsIdChanged);
                 this.contentsModel.on('destroy', this.onContentsDestroyed);
@@ -51,14 +51,20 @@ define(['util/Sync', 'modules', 'backbone'], function(Sync, modules) {
         },
         
         fetchContents: function(){
-            console.log('fetching widgets contents');
+            console.log('fetching widget contents for : '+this.get('name')+' - '+this.get('contentsModelId'));
             
             var coll = modules[this.get('name')].collection;
             this.contentsModel = coll.get(this.get('contentsModelId'));
             
             if(typeof this.contentsModel === 'undefined'){
+                console.log("not found");
                 coll.once('sync', this.fetchContents);
+                this.once('change', this.fetchContents);
             } else {
+                console.log("found !");
+                this.off('sync', this.fetchContents);
+                coll.off('change', this.fetchContents);
+                
                 this.contentsModel.on('destroy', this.onContentsDestroyed);
                 this.contentsModel.on('change:_id', this.onContentsIdChanged);
                 this.trigger('contentsReady', this.contentsModel);

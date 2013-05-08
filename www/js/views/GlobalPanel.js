@@ -144,7 +144,7 @@ define ([
                             y: event.pageY
                         },
                         name: name
-                    }, {parse: true});
+                    }, {client: true});
                 },
                 
                 createWidget: function(model){

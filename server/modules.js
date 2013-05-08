@@ -162,7 +162,7 @@ module.exports = function(){
                     
                     console.log("created : "+mod._id);
                     ack({_id: mod._id});
-                    data.id = mod._id;
+                    data._id = mod._id;
                     socket.broadcast.emit('create:'+name, data);
                 });
                 

@@ -171,7 +171,8 @@ define(['socket.io', 'backbone'], function(){
         makeFactory: function(name, collection){
             // Server pushing widgets
             Sync.socket.on('create:'+name, $.proxy(function(data){
-                var model = collection.create(data);
+                console.log("created a "+name+" from the server with id : "+data._id);
+                var model = collection.add(data);
                 model.trigger('sync', model);
             }, this));
         }

@@ -37,7 +37,7 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'modules', 
             
 			this.template = _.template(WidgetTemplate);
             
-            if(this.model.contentsModel !== 'undefined')
+            if(typeof this.model.contentsModel !== 'undefined')
                 this.render();
             else
                 this.model.on('contentsReady', this.render);
