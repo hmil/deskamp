@@ -10,7 +10,7 @@
         
         addPath: function(path){
             var p = _.clone(this.get('path'));
-            p.push(path);
+            p.push({p: path});
             
             this.set('path', p);
         }

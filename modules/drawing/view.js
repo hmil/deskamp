@@ -47,7 +47,7 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             /* draw the current model */
             var path = this.model.get('path');
             for(var i in path){
-                var p = path[i];
+                var p = path[i].p;
                 this.ctx.beginPath();
                 this.ctx.moveTo(p[0]);
                 for(var j = 0 ; j < p.length ; j++){

@@ -6,7 +6,7 @@
         
         defaults: {
             title: 'My todo list', 
-            items: {}
+            items: []
         }, 
 
         initialize: function() {
@@ -14,8 +14,12 @@
         },
 
         addItem: function(itemName) {
-            //This will create a new item
-            this.setItemState(itemName, false);
+            
+            var items = _.clone(this.get('items'));
+            items.push({name: itemName, state: false});
+            this.set('items', items);
+            
+            console.log(items);
         }, 
         
         checkItem: function(itemName) {
@@ -28,13 +32,25 @@
         
         setItemState: function(itemName, state){
             var items = _.clone(this.get('items'));
-            items[itemName] = state;
+            
+            for(var i = 0 ; i < items.length ; i++){
+                if(items[i].name == itemName){
+                    items[i] = {
+                        name: itemName,
+                        state: state
+                    };
+                    break;
+                }
+            }
+            
             this.set('items', items);
         },
         
         removeItem: function(itemName) {
-            var items = _.clone(this.get('items'));
-        	delete items[itemName];
+            var items = _.filter(this.get('items'), function(it){
+                it.name = itemName;
+            });
+            
             this.set('items', items);
         }
         
