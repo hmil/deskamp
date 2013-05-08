@@ -1,5 +1,5 @@
 
-define(['util/sync'], function(Sync){
+define(['util/Sync'], function(Sync){
     /** 
      * Core object containing everything the user-defined models may use.
      * @exports Core
