@@ -21,8 +21,11 @@ db.once('open', function () {
 
     //Configures the application
     require('./config.js')(app);
-
-    io.set('log level', 1);
+    io.configure(function () { 
+        io.set('log level', 1);
+        io.set("transports", ["xhr-polling"]); 
+        io.set("polling duration", 10); 
+    });
     
     socketAPI(io, modules);
 
