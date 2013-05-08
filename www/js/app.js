@@ -14,11 +14,11 @@ define([
     'collections/Widgets',
     'models/Widget',
     'views/Map',
-    'starter',
+    'modules',
     'socket.io',
     'backbone', 
     'Router'],
-    function(Tag, TagsCollection, WidgetBar, GlobalPanel, Sync, Widgets, Widget, Map, starter){
+    function(Tag, TagsCollection, WidgetBar, GlobalPanel, Sync, Widgets, Widget, Map, modules){
 
 
     // App is a singleton object
@@ -29,8 +29,6 @@ define([
     */
     App.init = function () {
         App.tags = new TagsCollection();
-
-        
 
         this.widgets = new Widgets();
         
@@ -64,7 +62,13 @@ define([
             window.location.hash = '/';
         }
         
-        starter();
+        for(var i in modules){
+            Sync.makeFactory(i, modules[i].collection);
+            
+            console.log("fetching coll");
+            modules[i].collection.fetch();
+        }
+        
         this.widgets.fetch();
         console.log("app initialized");
     };

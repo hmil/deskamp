@@ -101,15 +101,8 @@ define(['socket.io', 'backbone'], function(){
          * @private
          */
         makeLive: function(model){
-            
-            var hasChanged = false;
-            
-            function notifyChanged(){
-                hasChanged = true;
-            }
-            console.log("making live : "+model.url);
-            // Enables auto sync
-            model.once('sync', $.proxy(function(){
+        
+            var applyLive = $.proxy(function(){
                 console.log("subscribing to :"+model.url+"_"+model.id);
                 model.on('change', function(model, option){
                     console.log("changed : "+model.url+" !");
@@ -128,16 +121,29 @@ define(['socket.io', 'backbone'], function(){
                     model.destroy({remote: true});
                 });
                 
-                model.off('changed', notifyChanged);
+                model.off('change', notifyChanged);
                 // In case some changes occured before sync
                 if(hasChanged){
                     console.log("model has presync changes");
                     model.save();
                 }
-            }, this));
+            }, this);
             
-            model.on('change', notifyChanged);
+            var hasChanged = false;
+            function notifyChanged(){
+                hasChanged = true;
+            }
             
+            console.log("making live : "+model.url);
+            
+            if(typeof model.id === 'undefined'){
+                // Enables auto sync
+                model.once('sync', applyLive);
+                
+                model.on('change', notifyChanged);
+            } else {
+                applyLive();
+            }
             model.once('destroy', $.proxy(this.onModelDestroy, this));
         },
         
@@ -165,7 +171,7 @@ define(['socket.io', 'backbone'], function(){
         makeFactory: function(name, collection){
             // Server pushing widgets
             Sync.socket.on('create:'+name, $.proxy(function(data){
-                var model = collection.create(data, {parse: true});
+                var model = collection.create(data);
                 model.trigger('sync', model);
             }, this));
         }
