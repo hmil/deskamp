@@ -3,6 +3,7 @@ var fs = require('fs');
 
 var modulePath = 'modules/';
 
+var mongoose = require('mongoose');
 
 
 module.exports = function(){
@@ -10,6 +11,8 @@ module.exports = function(){
     var jsFile = '';
     
     var modules = [];
+    
+    var models = {};
     
     var nbModules = 0;
     var fetchedStyles = 0;
@@ -30,7 +33,7 @@ module.exports = function(){
                 if(i < modules.length -1)
                     jsFile += '","';
             }
-            jsFile += '"], function(';
+            jsFile += '", "backbone"], function(';
             
             for(var i in modules){
                 jsFile += modules[i].name+'View, '+modules[i].name+'Model';
@@ -45,10 +48,13 @@ module.exports = function(){
                 jsFile += modules[i].name+': { '
                     + 'view: '+modules[i].name+'View,'
                     + 'model:'+modules[i].name+'Model,'
+                    + 'collection: new (Backbone.Collection.extend({'
+                    + 'model: '+modules[i].name+'Model,'
+                    + 'url: "'+modules[i].name+'"})),'
                     + 'icon: "'+modules[i].icon+'",'
                     + 'title: "'+modules[i].title+'",'
                     + 'name: "'+modules[i].name+'"'
-                    +'}';
+                    + '}';
                     
                 if(i < modules.length -1)
                     jsFile += ',';
@@ -71,7 +77,7 @@ module.exports = function(){
     
     /* Fetches an individual module */
     function fetchModule(name){
-        if(/\..*/.exec(name)){
+        if(/^\..*/.exec(name)){
             onViewFetched();
             onCssFetched();
             return;
@@ -99,6 +105,9 @@ module.exports = function(){
             });
             
             onViewFetched();
+            
+            models[name] = mongoose.model(name+"Module", 
+                require('../modules/'+name+'/'+requiredProperty(parsedPackage, 'schema', name)));
         });
         
        
@@ -140,13 +149,60 @@ module.exports = function(){
         function createListeners(name){
             console.log("module : "+name);
             
-            var CRUD = makeCRUDService(name);
-            socket.on('update:'+name, function(data){
-                console.log("updated");
+            socket.on('create:'+name, function(data, ack){
+                console.log("created a "+name);
+                
+                var mod = new models[name](data);
+                
+                console.log(mod);
+                mod.save(function(err){
+                    console.log(mod);
+                    if(err) throw err;
+                    console.log("saved");
+                    
+                    console.log("created : "+mod._id);
+                    ack({_id: mod._id});
+                    data.id = mod._id;
+                    socket.broadcast.emit('create:'+name, data);
+                });
+                
+            }).on('read:'+name, function(data, ack){
+                console.log("reading "+name+" "+data.id);
+                
+                if(!data.id){
+                    models[name].find(function(err, data){
+                        
+                        if(err) throw err;
+                        
+                        console.log("fetching collection :");
+                        console.log(data);
+                        
+                        ack(data);
+                    });
+                } else {
+                    // TODO
+                    console.log("fetching model : "+data.id);
+                }
+            }).on('update:'+name, function(data){
+                console.log("updated : "+data.id);
+                console.log(data);
                 socket.broadcast.emit('update:'+name+'_'+data.id, data.model);
                 
-            }).on('delete:'+name, function(id){
+                delete data.model._id;
+                
+                models[name].update({_id: data.id}, data.model, function(err){
+                    if(err) throw err;
+                    
+                    console.log("updated");
+                });
+                
+            }).on('delete:'+name, function(id, ack){
                 socket.broadcast.emit('delete:'+name+'_'+id);
+                
+                models[name].remove({_id: id}, function(err){
+                    if(err) throw err;
+                    ack();
+                });
             });
         }
         
@@ -160,27 +216,5 @@ module.exports = function(){
             
             createListeners(name);
         }
-    };
-    
-    function makeCRUDService(name){
-    
-        return {
-            create: function(){
-            
-            },
-            
-            read: function(){
-            
-            },
-            
-            update: function(){
-            
-            },
-            
-            destroy: function(){
-            
-            }
-            
-        };
     };
 }

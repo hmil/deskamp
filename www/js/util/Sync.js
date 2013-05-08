@@ -61,7 +61,7 @@ define(['socket.io', 'backbone'], function(){
                 case 'create':
                     Sync.socket.emit('create:'+model.url, model.toJSON(), function(data){
                         console.log(data);
-                        model.id = data.id;
+                        model.set(data);
                         
                         if(options.success) options.success(data);
                     });
@@ -101,6 +101,12 @@ define(['socket.io', 'backbone'], function(){
          * @private
          */
         makeLive: function(model){
+            
+            var hasChanged = false;
+            
+            function notifyChanged(){
+                hasChanged = true;
+            }
             console.log("making live : "+model.url);
             // Enables auto sync
             model.once('sync', $.proxy(function(){
@@ -121,7 +127,16 @@ define(['socket.io', 'backbone'], function(){
                     console.log("deleting :"+model.id);
                     model.destroy({remote: true});
                 });
+                
+                model.off('changed', notifyChanged);
+                // In case some changes occured before sync
+                if(hasChanged){
+                    console.log("model has presync changes");
+                    model.save();
+                }
             }, this));
+            
+            model.on('change', notifyChanged);
             
             model.once('destroy', $.proxy(this.onModelDestroy, this));
         },
@@ -139,8 +154,6 @@ define(['socket.io', 'backbone'], function(){
          */
         onModelDestroy: function(model, coll, options){
             this.unmakeLive(model);
-            if(!options.remote)
-                Backbone.sync('delete', model); 
         },
         
         /**
@@ -151,7 +164,7 @@ define(['socket.io', 'backbone'], function(){
          */
         makeFactory: function(name, collection){
             // Server pushing widgets
-            Sync.socket.on('create:widget', $.proxy(function(data){
+            Sync.socket.on('create:'+name, $.proxy(function(data){
                 var model = collection.create(data, {parse: true});
                 model.trigger('sync', model);
             }, this));
@@ -172,11 +185,12 @@ define(['socket.io', 'backbone'], function(){
      */
     Sync.Model = Backbone.Model.extend({
         constructor: function(){
-            console.log("created widget with id :"+arguments[0].id);
             Backbone.Model.apply(this, arguments);
             
             Sync.makeLive(this);
-        }
+        },
+        
+        idAttribute: '_id'
     });
     
     Sync.createModel = function(model, data){

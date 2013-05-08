@@ -1,8 +1,8 @@
-define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone'], function(WidgetTemplate, Widget, app) {
+define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'modules', 'backbone'], function(WidgetTemplate, Widget, app, modules) {
 	return Backbone.View.extend({
 		events: {
 			"click": "handleWidgetsFocus",
-			"click .widget_delete_button": "onDelete",
+			"click .widget_delete_button": "onDeleteIntent",
             "mouseenter .widget_container": "onMouseenter",
             "mouseleave .widget_container": "onMouseleave",
             "mousedown": "preventProp",
@@ -27,26 +27,20 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
                 throw "Widget cannot be instanciated without a model property !";
 			}
             
-			_.bindAll(this, 'render', 'onDelete', 'updatePosition', 'onMouseenter', 'onMouseleave', 'onDragStart', 'updateCoords', 'updateSize', 'onResize');
+			_.bindAll(this, 'render', 'onDelete', 'onDeleteIntent', 'updatePosition', 'onMouseenter', 'onMouseleave', 'onDragStart', 'updateCoords', 'updateSize', 'onResize', 'handleWidgetsFocus');
             
             this.model.on('change:coords', this.updateCoords);
             this.model.on('change:size', this.updateSize);
-            this.model.on('change:contents', this.render);
             this.isDragged = false;
-
-			this.wrapped = this.model.get('contentsView');
             
-            this.model.on('destroy', $.proxy(function(){
-                this.onDelete()
-            }, this));
+            this.model.on('destroy', this.onDelete);
             
 			this.template = _.template(WidgetTemplate);
-
-			_.bindAll(this, 'render', 'onDelete', 'updatePosition', 
-				'onMouseenter', 'onMouseleave', 'onDragStart', 
-				'handleWidgetsFocus');
             
-            this.render();
+            if(this.model.contentsModel !== 'undefined')
+                this.render();
+            else
+                this.model.on('contentsReady', this.render);
 		}, 
         
         updateCoords: function(){
@@ -62,14 +56,12 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
             this.$el.width(s.width).height(s.height);
         },
 
+        onDeleteIntent: function(){
+            this.model.destroy();
+        },
+        
 		onDelete: function(evt) {
 			this.$el.remove();
-			if(this.wrapped.remove) {
-				this.wrapped.remove();
-			}
-			
-            if(evt)
-                this.model.destroy();
 		},
         
         onResize: function(evt, ui){
@@ -86,11 +78,16 @@ define(['text!/templates/widget.jst', '/js/models/Widget.js', 'app', 'backbone']
 		},
 
 		render: function() {
+            console.log("rendering widget");
+            
+            if(typeof this.model.contentsModel === 'undefined')
+                return;
+                
 			this.$el.html(this.template());
 
-			var wrappedView = this.wrappedView = new this.wrapped({
+			var wrappedView = this.wrappedView = new modules[this.model.get('name')].view({
 				el: this.$('.widget_content'),
-                model: this.model.get('contentsModel')
+                model: this.model.contentsModel
 			});
 			wrappedView.render();
             
