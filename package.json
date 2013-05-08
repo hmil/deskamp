@@ -8,5 +8,5 @@
 	"socket.io": "0.9.x", 
 	"mongoose": ""
   },
-  "engine": "node 0.10.1"
+  "engine": "node 0.9.0"
 }
