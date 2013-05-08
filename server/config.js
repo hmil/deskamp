@@ -3,6 +3,7 @@
 */
 
 var express = require('express');
+var mongoose = require('mongoose');
 
 module.exports = function(app){
 
@@ -14,6 +15,7 @@ module.exports = function(app){
     app.configure('development', function(){
         // app.use(express.logger('dev'));
     });
+    
 
     //Express configuration
     app.configure(function(){
