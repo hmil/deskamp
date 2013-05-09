@@ -20,7 +20,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
     
     // Fast and dirty way to clean database to avoid flooding during tests
-    conn.connection.db.dropDatabase(function(){});
+    //conn.connection.db.dropDatabase(function(){});
     
     // Loads the custom modules
     var modules = new Modules();
