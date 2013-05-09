@@ -16,10 +16,10 @@
             <li class="todolist_element">
                 <% if(item.state === true) { %>
                 <input type="checkbox" data-name="<%= item.name %>" class="<%= item.name %>" checked /> 
-                <strike><label for="<%= item.name %>"><%= item.name %></label></strike>
+                <strike><label for="<%= item.name %>"><%= parse(item.name) %></label></strike>
                 <% } else { %>
                     <input type="checkbox" data-name="<%= item.name %>" class="<%= item.name %>"/> 
-                    <label for="<%= item.name %>"><%= item.name %></label>
+                    <label for="<%= item.name %>"><%= parse(item.name) %></label>
                 <% } %>
 
                 <img style="float: right; margin-right: 10px;" src="/img/delete.png" class="todolist_remove_item" title="Remove" data-name="<%= item.name %>" />

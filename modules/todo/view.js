@@ -89,12 +89,19 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         render: function(){
             this.$el.html(
                 this.template({
-                    todo: this.model.toJSON()
+                    todo: this.model.toJSON(), 
+                    parse: this.parse
                 })
             );
             
             this.addTaskNameInput = this.$('[data-addTask=name]');
             this.addTaskNameInput.focus();
+        }, 
+
+        parse: function(c) {
+            return c
+                .replace(/#([a-zA-Z0-9.-]+)/gi, '<a href="#!$1">$1</a>')
+                .replace(/\n/gi, '<br />');
         }
     });
 
