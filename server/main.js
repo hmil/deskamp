@@ -6,21 +6,16 @@ var app = express()
 	, server = http.createServer(app)
 	, io = require('socket.io').listen(server)
 	, mongoose = require('mongoose/')
+	, database = mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/hackathon', function(err) { if(err) throw err; })
     , socketAPI = require('./socketAPI')
     , Modules = require('./modules');
 
-var conn = mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/hackathon', function(err) { 
-    if(err) throw err;
-});
-
-
-
-var db = mongoose.connection;
+db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
     
     // Fast and dirty way to clean database to avoid flooding during tests
-    //conn.connection.db.dropDatabase(function(){});
+    conn.connection.db.dropDatabase(function(){});
     
     // Loads the custom modules
     var modules = new Modules();
