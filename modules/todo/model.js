@@ -14,6 +14,7 @@
         },
 
         addItem: function(itemName) {
+            if(itemName == '') return;
             
             var items = _.clone(this.get('items'));
             items.push({name: itemName, state: false});
@@ -48,7 +49,7 @@
         
         removeItem: function(itemName) {
             var items = _.filter(this.get('items'), function(it){
-                it.name = itemName;
+                return it.name != itemName;
             });
             
             this.set('items', items);
