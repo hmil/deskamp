@@ -37,9 +37,7 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         },
 
         removeItem: function(event) {
-            var $el = $(event.target);
-            console.log($el.attr('data-name'));
-            this.model.removeItem($el.attr('data-name'));
+            this.model.removeItem($(event.target).attr('data-name'));
         },
 
         editTitle: function() {
@@ -62,7 +60,7 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
             }
         }, 
 
-        finishEditTitle: function() {
+        finishEditTitle: function(event) {
             this.$('.todo_title_edit').hide();
             var newTitle = this.$('.todo_title_editbox').val();
             this.$('.tdtitle').html(newTitle).show();
@@ -89,12 +87,19 @@ define(["Session", "./model.js", "text!./template.jst", 'backbone'],
         render: function(){
             this.$el.html(
                 this.template({
-                    todo: this.model.toJSON()
+                    todo: this.model.toJSON(), 
+                    parse: this.parse
                 })
             );
             
             this.addTaskNameInput = this.$('[data-addTask=name]');
             this.addTaskNameInput.focus();
+        }, 
+
+        parse: function(c) {
+            return c
+                .replace(/#([a-zA-Z0-9.-]+)/gi, '<a href="#!$1">$1</a>')
+                .replace(/\n/gi, '<br />');
         }
     });
 

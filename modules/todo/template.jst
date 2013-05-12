@@ -1,27 +1,29 @@
 ﻿<div class="todolist">
     <p class="tdtitle"><%= todo.title %></p>
     <div class="todo_title_edit" style="display: none;">
-        <form onsubmit="return false;" action="#"><input type="text" name="title" class="todo_title_editbox" /></form>
+        <form onsubmit="return false;" action="#">
+            <input type="text" name="title" class="todo_title_editbox" /></form>
         <br />
     </div>
     <hr />
 
     <form class="tasks-list" onsubmit="return false;" method="" action="#" data-action="addItem">
-        <input type="text" placeholder='Add task.' name="task-name" class="add_task" data-addTask="name"/>
+        <input type="text" placeholder='Add tasks' name="task-name" class="add_task" data-addTask="name"/>
     </form>
     
 
     <ul class="tasks">
         <% _.each(todo.items, function(item) { %>
             <li class="todolist_element">
+                <!---<form style="display: inline;" onsubmit="return false;">!-->
                 <% if(item.state === true) { %>
-                <input type="checkbox" data-name="<%= item.name %>" class="<%= item.name %>" checked /> 
+                <input type="checkbox" data-name="<%= item.name %>" id="<%= item.name %>" class="<%= item.name %>" checked /> 
                 <strike><label for="<%= item.name %>"><%= item.name %></label></strike>
                 <% } else { %>
-                    <input type="checkbox" data-name="<%= item.name %>" class="<%= item.name %>"/> 
+                    <input type="checkbox" data-name="<%= item.name %>" class="<%= item.name %>"  id="<%= item.name %>" /> 
                     <label for="<%= item.name %>"><%= item.name %></label>
                 <% } %>
-
+                <!-- </form> -->
                 <img style="float: right; margin-right: 10px;" src="/img/delete.png" class="todolist_remove_item" title="Remove" data-name="<%= item.name %>" />
             </li>
         <% }); %>
