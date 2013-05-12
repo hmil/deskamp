@@ -6,7 +6,7 @@ var app = express()
 	, server = http.createServer(app)
 	, io = require('socket.io').listen(server)
 	, mongoose = require('mongoose/')
-	, database = mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/hackathon', function(err) { if(err) throw err; })
+	, database = mongoose.connect(process.env.MONGOHQ_URL || 'mongodb://localhost/hackathon', function(err) { if(err) throw err; })
     , socketAPI = require('./socketAPI')
     , Modules = require('./modules');
 
