@@ -108,6 +108,9 @@ module.exports = function(){
             
             models[name] = mongoose.model(name+"Module", 
                 require('../modules/'+name+'/'+requiredProperty(parsedPackage, 'schema', name)));
+                
+            // Cleans database for tests
+            models[name].remove(function(err){ if(err) throw err; });
         });
         
        

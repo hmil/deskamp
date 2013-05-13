@@ -18,6 +18,9 @@ module.exports = function(io, modules){
     
     var Model = mongoose.model('widget', WidgetSchema);
     
+    // Cleans database for tests
+    Model.remove(function(err){ if(err) throw err; });
+    
     io.sockets.on('connection', function (socket) {
         socket
         .on('create:widget', function (data, ack) {
