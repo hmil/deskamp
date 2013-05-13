@@ -9,7 +9,7 @@ var app = express()
     , socketAPI = require('./socketAPI')
     , Modules = require('./modules');
 
-var conn = mongoose.connect(process.env.MONGOHQ_URL || 'mongodb://localhost/hackathon', function(err) { 
+var conn = mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/hackathon', function(err) { 
     if(err) throw err;
 });
 
