@@ -16,17 +16,28 @@ module.exports = function(io, modules){
         contentsModelId: String
     };
     
-    var Model = mongoose.model('widget', WidgetSchema);
+    var TagSchema = {
+        name: String,
+        x: Number,
+        y: Number
+    };
+    
+    var Widget = mongoose.model('widget', WidgetSchema);
+    var Tag = mongoose.model('tag', TagSchema);
     
     // Cleans database for tests
-    Model.remove(function(err){ if(err) throw err; });
+    Widget.remove(function(err){ if(err) throw err; });
+    Tag.remove(function(err){ if(err) throw err; });
     
     io.sockets.on('connection', function (socket) {
         socket
+        
+        // Widget sync API
+        
         .on('create:widget', function (data, ack) {
             
             console.log("created a widget");
-            var widget = new Model(data);
+            var widget = new Widget(data);
             
             widget.save(function(err){
                 if(err) throw err;
@@ -41,7 +52,7 @@ module.exports = function(io, modules){
             
             delete data.model._id;
                 
-            Model.update({_id: data.id}, data.model, function(err){
+            Widget.update({_id: data.id}, data.model, function(err){
                 if(err) throw err;
                 
                 socket.broadcast.emit('update:widget'+'_'+data.id, data.model);
@@ -52,13 +63,13 @@ module.exports = function(io, modules){
             console.log(id);
             
             socket.broadcast.emit('delete:widget'+'_'+id);
-            Model.remove({_id: id}, function(err){
+            Widget.remove({_id: id}, function(err){
                 if(err) throw err;
                 ack();
             });
         }).on('read:widget', function(data, ack){
             if(!data.id){
-                Model.find(function(err, data){
+                Widget.find(function(err, data){
                     
                     if(err) throw err;
                     
@@ -70,6 +81,58 @@ module.exports = function(io, modules){
             } else {
                 // TODO
                 console.log("fetching model : "+data.id);
+            }
+        })
+        
+        // Tag sync API
+        
+        .on('create:tags', function (data, ack) {
+            
+            console.log("created a tag");
+            var tag = new Tag(data);
+            
+            tag.save(function(err){
+                if(err) throw err;
+                
+                ack({_id: tag._id});
+                socket.broadcast.emit('create:tags', tag);
+            });
+        })
+        .on('update:tags', function(data){
+            console.log("update tag");
+            console.log(data);
+            
+            delete data.model._id;
+                
+            Tag.update({_id: data.id}, data.model, function(err){
+                if(err) throw err;
+                
+                socket.broadcast.emit('update:tags'+'_'+data.id, data.model);
+                console.log("updated");
+            });
+        }).on('delete:tags', function(id, ack){
+            console.log('delete tag');
+            console.log(id);
+            
+            socket.broadcast.emit('delete:tags'+'_'+id);
+            Tag.remove({_id: id}, function(err){
+                if(err) throw err;
+                ack();
+            });
+        }).on('read:tags', function(data, ack){
+            if(!data.id){
+                Tag.find(function(err, data){
+                    
+                    if(err) throw err;
+                    
+                    console.log("fetching collection :");
+                    console.log(data);
+                    
+                    ack(data);
+                });
+            } else {
+                // TODO
+                console.log("fetching tags : "+data.id);
             }
         });
         

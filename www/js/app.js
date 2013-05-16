@@ -29,6 +29,7 @@ define([
     */
     App.init = function () {
         App.tags = new TagsCollection();
+        Sync.makeFactory('tags', this.tags);
 
         this.widgets = new Widgets();
         
@@ -70,6 +71,7 @@ define([
         }
         
         this.widgets.fetch();
+        this.tags.fetch();
         console.log("app initialized");
     };
     
