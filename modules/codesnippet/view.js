@@ -1,4 +1,9 @@
-﻿
+﻿/**
+*   Code snippet view. 
+*
+*   @todo Enable syntax coloration theme choice
+*/
+
 define(["./model.js", "text!./template.jst", './textareaUtils.js', 'backbone'], 
     function(CodeSnippetModel, template){
 
@@ -17,14 +22,16 @@ define(["./model.js", "text!./template.jst", './textareaUtils.js', 'backbone'],
             'focusout .code-editbox': 'finishEdit'
         }, 
         
-        initialize: function() {
-            _.bindAll(this, 'render', 'editCode', 'finishEdit', 'handleTabulation');
+        prettifyLoaded: false, 
+        prettifyLoading: false,
 
-            this.model = new CodeSnippetModel();
+        initialize: function() {
+            _.bindAll(this, 'render', 'editCode', 'finishEdit', 'handleTabulation', 'loadPrettify');
 
             this.template = _.template(template);
             this.render();
 
+            this.model.on('change', this.render);
         }, 
 
         editCode: function() {
@@ -43,16 +50,33 @@ define(["./model.js", "text!./template.jst", './textareaUtils.js', 'backbone'],
             this.$('.code-content').text(newCode);
             this.$('.code-content').show();
             this.model.set('code', newCode);
-            PR.prettyPrint();
         },
 
         render: function() {
             this.$el.html(
                 this.template({
                     snippet: this.model, 
-                    loadPrettify: true
                 })
             );
+            if(this.prettifyLoaded === false) {
+                this.loadPrettify();
+            }
+            else {
+                PR.prettyPrint();
+            }
+        }, 
+
+        /**
+        *   Loads the prettify script (syntaxic coloration) when needed
+        */
+        loadPrettify: function() {
+            if(this.prettifyLoading === true) return;
+            var prettifyUrl = "http://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?autoload=true&skin="+this.model.get('skin');
+
+            this.prettifyLoading = true,
+            $.getScript(prettifyUrl, $.proxy(function() {
+                this.prettifyLoaded = true;
+            }, this));
         }, 
 
         /**

@@ -1,7 +1,4 @@
 ﻿<div class="code-snippet">
-  <% if(loadPrettify === true) { %>
-  <script type="text/javascript" class="prettify" src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?autoload=true&skin=<%= snippet.get('skin') %>" id="prettify-<%= snippet.get('skin') %>"></script>
-  <% } %>
   <?prettify?>
   <pre class="prettyprint code-content"><%= snippet.get('code') %></pre>
   <div class="code-edit" style="display: none;">
