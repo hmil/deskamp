@@ -45,7 +45,9 @@ define([
             el: '#widget_bar'
         });
         this.globalPanel = new GlobalPanel({
-            el: '#global_panel'
+            el: '#global_panel',
+            widgets: this.widgets,
+            tags: this.tags
         });
         this.globalPanel.render();
         

@@ -10,7 +10,7 @@ body {
     margin-bottom: 15px;
     padding: 10px;
 
-background-color: white;
+    background-color: white;
 
     border-top-width:12px;
     border-left-width:12px;
@@ -162,4 +162,9 @@ background-color: white;
 
 #createTagForm {
     display: none;
+}
+
+.tag h1 {
+    color: #666;
+    opacity: 0.8;
 }

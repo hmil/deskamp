@@ -30,10 +30,10 @@ define([
                 return tag.get('name') == anchor;
             });
             if(typeof(result) === 'undefined') {
-                this.navigate('/');
+                window.location.hash = '/';
             }
             else {
-                App.globalPanel.scrollTo(result.get('x'), result.get('y'), 1000);
+                App.globalPanel.scrollTo(result.get('x')-$(window).width()/2, result.get('y'), 1000);
             }
         }, 
 

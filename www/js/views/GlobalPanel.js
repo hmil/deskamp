@@ -1,17 +1,17 @@
 
 define ([
-    'app',
     'models/Tag',
-    '/js/views/Widget.js',
     '/js/models/Widget.js',
+    '/js/views/Widget.js',
+    '/js/views/Tag.js',
     '/js/views/Scrolling.js',
      'backbone'],
-    function(app, Tag, WidgetView, WidgetModel, Scrolling){
+    function(TagModel, WidgetModel, WidgetView, TagView, Scrolling){
             return Backbone.View.extend({
                 
                 events: {
                     'drop': 'ondrop', 
-                    'click #createTagLink': 'createTag', 
+                    'click #createTagLink': 'showTagForm', 
                     'keydown #newTagName': 'checkNewTagForm', 
                     'click': 'checkHideContextMenu'
                 },
@@ -34,13 +34,14 @@ define ([
                 horizontalScrollSpeed: 0, 
                 verticalScrollSpeed: 0,
 
-                initialize : function(){
+                initialize : function(param){
+                    this.tags = param.tags;
+                    this.widgets = param.widgets;
                     
-                    if(!app) app = require('app');
+                    _.bindAll(this, 'ondrop', 'updatePosition', 'createWidget', 'createTag', 'showTagForm', 'checkNewTagForm', 'tagContextMenuHandler');
                     
-                    _.bindAll(this, 'ondrop', 'updatePosition', 'createWidget', 'createTag', 'checkNewTagForm', 'tagContextMenuHandler');
-                    
-                    app.widgets.on('add', this.createWidget);
+                    this.widgets.on('add', this.createWidget);
+                    this.tags.on('add', this.createTag);
                     
                     // We can drop elements into the main panel
                     this.$el.droppable();
@@ -96,19 +97,37 @@ define ([
                         return false;
                 },
 
-                createTag: function(event) {
+                createTag: function(model) {
+                    console.log('adding tag to DOM');
+                    var tag = new TagView({
+                        model: model
+                    });
+
+                    this.$el.append(tag.$el);
+                },
+                
+                createWidget: function(model){
+                    console.log('adding widget to DOM');
+                    var wid = new WidgetView({
+                        model: model
+                    });
+
+                    this.$el.append(wid.$el);
+                },
+                
+                showTagForm: function(event){
                     event.preventDefault();
 
                     $('#createTagLink').hide();
                     $('#createTagForm').show();
                     $('#newTagName').focus();
-                }, 
+                },
 
                 checkNewTagForm: function(event) {
                     var keycode = event.keycode || event.which; // Compatibility
                     if(keycode == 13) {
                         event.preventDefault();
-                        app.tags.create(new Tag({
+                        this.tags.create(new TagModel({
                             x: this.currentPosition.x,
                             y: this.currentPosition.y,
                             name: $('#newTagName').val()
@@ -138,7 +157,7 @@ define ([
 
                     if(!name) return; // We dont want to drop a new widget
                     
-                    app.widgets.create({
+                    this.widgets.create({
                         coords: {
                             x: event.pageX,
                             y: event.pageY
@@ -146,15 +165,6 @@ define ([
                         name: name
                     }, {client: true});
                 },
-                
-                createWidget: function(model){
-                    console.log('adding');
-                    var wid = new WidgetView({
-                        model: model
-                    });
-
-                    this.$el.append(wid.$el);
-                }, 
 
                 render: function() {
                     this.scrolling.render();
