@@ -103,7 +103,7 @@ define(['app',
 		      , $el       = this.$el;
 
 		    var inViewportTags = app.tags.find(function(tag) {
-		        return (tag.get('x') >= scrollTop && tag.get('x') <= scrollLeft + $(window).width())
+		        return (tag.get('x') >= scrollLeft && tag.get('x') <= scrollLeft + $(window).width())
 		            && (tag.get('y') >= scrollTop && tag.get('y') <= scrollTop + $(window).height())
 		    });
 
